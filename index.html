@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>Pleb Command Center — Bitcoin Toolkit by @aastack</title>
+  <meta name="description" content="All your Bitcoin tools in one place. StackSim, StackFreedom, SatChek, SatConvert. Built by @aastack." />
+  <meta property="og:title" content="Pleb Command Center" />
+  <meta property="og:description" content="All your Bitcoin tools in one place. No KYC." />
+  <meta property="og:type" content="website" />
+  <meta name="theme-color" content="#080808" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Share+Tech+Mono&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { -webkit-text-size-adjust: 100%; }
+
+    body {
+      min-height: 100vh;
+      min-height: 100dvh;
+      background: #060606;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Montserrat', sans-serif;
+      padding: 1.5rem 1rem;
+    }
+
+    .hub-root {
+      width: 100%;
+      max-width: 760px;
+      background: #080808;
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,0.05);
+      padding: 2.8rem 2rem 2.2rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hub-root::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,0.04) 4px);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .glow-top {
+      position: absolute;
+      top: -120px; left: 50%;
+      transform: translateX(-50%);
+      width: 100%; height: 340px;
+      background: radial-gradient(ellipse, rgba(255,90,0,0.1) 0%, transparent 65%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .glow-bottom {
+      position: absolute;
+      bottom: -80px; left: 50%;
+      transform: translateX(-50%);
+      width: 400px; height: 200px;
+      background: radial-gradient(ellipse, rgba(255,90,0,0.04) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── HEADER ── */
+    .hub-header {
+      text-align: center;
+      position: relative;
+      z-index: 2;
+      margin-bottom: 2.4rem;
+    }
+
+    .btc-mark {
+      width: 52px; height: 52px;
+      margin: 0 auto 18px;
+      animation: btc-pulse 3s ease-in-out infinite;
+    }
+
+    @keyframes btc-pulse {
+      0%,100% { filter: drop-shadow(0 0 6px rgba(255,100,0,0.3)); }
+      50%      { filter: drop-shadow(0 0 22px rgba(255,100,0,0.7)); }
+    }
+
+    .hub-eyebrow {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.3em;
+      color: #ff6400;
+      opacity: 0.6;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    .title-wrap {
+      position: relative;
+      display: inline-block;
+      margin-bottom: 14px;
+      max-width: 100%;
+    }
+
+    .hub-title {
+      font-weight: 800;
+      font-size: clamp(24px, 7vw, 48px);
+      letter-spacing: clamp(0.06em, 1.5vw, 0.14em);
+      text-transform: uppercase;
+      color: #fff;
+      line-height: 1.1;
+      position: relative;
+      display: inline-block;
+      animation: glitch-main 5s infinite;
+    }
+
+    .hub-title .hi { color: #ff6400; }
+
+    @keyframes glitch-main {
+      0%,90%,100% { transform: translate(0,0); filter: none; }
+      91% { transform: translate(-3px,1px); filter: hue-rotate(90deg) brightness(1.3); }
+      92% { transform: translate(3px,-1px); filter: hue-rotate(-90deg); }
+      93% { transform: translate(-1px,0); filter: none; }
+      95% { transform: translate(2px,-2px); filter: brightness(1.5); }
+      96% { transform: translate(0,0); filter: none; }
+    }
+
+    .hub-title::before,
+    .hub-title::after {
+      content: attr(data-text);
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      font-weight: 800;
+      pointer-events: none;
+    }
+
+    .hub-title::before {
+      color: #00e5ff;
+      animation: glitch-b 5s infinite;
+      clip-path: polygon(0 10%, 100% 10%, 100% 35%, 0 35%);
+      opacity: 0;
+    }
+
+    .hub-title::after {
+      color: #ff003c;
+      animation: glitch-a 5s infinite;
+      clip-path: polygon(0 60%, 100% 60%, 100% 82%, 0 82%);
+      opacity: 0;
+    }
+
+    @keyframes glitch-b {
+      0%,89%,100% { opacity:0; transform:translate(0,0); }
+      91% { opacity:0.8; transform:translate(-5px,0); }
+      92% { opacity:0; }
+      94% { opacity:0.5; transform:translate(4px,0); }
+      95% { opacity:0; }
+    }
+
+    @keyframes glitch-a {
+      0%,90%,100% { opacity:0; transform:translate(0,0); }
+      92% { opacity:0.7; transform:translate(5px,0); }
+      93% { opacity:0; }
+      95% { opacity:0.4; transform:translate(-3px,0); }
+      96% { opacity:0; }
+    }
+
+    .hub-divider {
+      width: 60px; height: 1px;
+      background: linear-gradient(90deg, transparent, #ff6400, transparent);
+      margin: 0 auto 12px;
+    }
+
+    .hub-sub {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 10px;
+      color: #2e2e2e;
+      letter-spacing: 0.18em;
+    }
+
+    /* ── GRID — desktop 2 col ── */
+    .tool-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .tool-card {
+      background: rgba(255,255,255,0.025);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 14px;
+      padding: 1.4rem 1.2rem 1.2rem;
+      text-decoration: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.25s, background 0.25s, transform 0.15s;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .tool-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 10%; right: 10%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+      opacity: 0;
+      transition: opacity 0.25s;
+    }
+
+    .tool-card::after {
+      content: '';
+      position: absolute;
+      top: -30px; right: -30px;
+      width: 90px; height: 90px;
+      background: radial-gradient(circle, var(--accent), transparent 70%);
+      opacity: 0;
+      transition: opacity 0.3s;
+      border-radius: 50%;
+    }
+
+    @media (hover: hover) {
+      .tool-card:hover {
+        background: rgba(255,255,255,0.045);
+        border-color: rgba(255,255,255,0.14);
+        transform: translateY(-3px);
+      }
+      .tool-card:hover::before { opacity: 1; }
+      .tool-card:hover::after  { opacity: 0.12; }
+      .tool-card:hover .tool-name { color: var(--accent); }
+      .tool-card:hover .tool-cta { opacity: 1; }
+      .tool-card:hover .cta-arrow { transform: translateX(4px); }
+    }
+
+    .tool-card:active {
+      background: rgba(255,255,255,0.05);
+      border-color: var(--accent);
+      transform: scale(0.98);
+      transition: transform 0.08s;
+    }
+
+    /* card inner layout — stacked on desktop, row on mobile */
+    .card-top {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .tool-icon { font-size: 22px; line-height: 1; }
+
+    .tool-tag {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.18em;
+      color: var(--accent);
+      text-transform: uppercase;
+      opacity: 0.75;
+    }
+
+    .tool-name {
+      font-weight: 800;
+      font-size: 15px;
+      color: #fff;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      line-height: 1.1;
+      transition: color 0.2s;
+    }
+
+    .tool-desc {
+      font-size: 12px;
+      font-weight: 400;
+      color: rgba(255,255,255,0.28);
+      line-height: 1.65;
+      flex: 1;
+    }
+
+    .tool-cta {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 9px;
+      color: var(--accent);
+      letter-spacing: 0.12em;
+      opacity: 0.5;
+      transition: opacity 0.2s;
+      margin-top: 2px;
+    }
+
+    .cta-arrow { display: inline-block; transition: transform 0.2s; }
+
+    /* ── FOOTER ── */
+    .hub-footer {
+      text-align: center;
+      margin-top: 1.8rem;
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .footer-by {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 9px;
+      color: #1e1e1e;
+      letter-spacing: 0.2em;
+    }
+
+    .footer-link {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 11px;
+      color: #ff6400;
+      text-decoration: none;
+      letter-spacing: 0.15em;
+      opacity: 0.4;
+      transition: opacity 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      padding: 8px 0;
+      min-height: 44px;
+    }
+
+    .footer-link:hover { opacity: 1; }
+    .x-icon { width: 11px; height: 11px; fill: #ff6400; }
+
+    /* ── BREAKPOINTS ── */
+
+    /* Tablet */
+    @media (max-width: 620px) {
+      body { padding: 1rem 0.8rem; align-items: flex-start; }
+
+      .hub-root {
+        padding: 2rem 1.2rem 1.8rem;
+        border-radius: 14px;
+      }
+    }
+
+    /* Mobile — single column, horizontal card layout */
+    @media (max-width: 480px) {
+      body { padding: 0.8rem 0.6rem; }
+
+      .hub-root {
+        padding: 1.6rem 1rem 1.5rem;
+        border-radius: 12px;
+      }
+
+      .btc-mark { width: 42px; height: 42px; margin-bottom: 14px; }
+
+      .hub-header { margin-bottom: 1.6rem; }
+
+      .hub-eyebrow { font-size: 9px; letter-spacing: 0.2em; }
+
+      .hub-sub { font-size: 9px; letter-spacing: 0.12em; }
+
+      /* Single column */
+      .tool-grid {
+        grid-template-columns: 1fr;
+        gap: 8px;
+      }
+
+      /* Horizontal row layout inside each card */
+      .tool-card {
+        flex-direction: row;
+        align-items: flex-start;
+        padding: 1rem;
+        gap: 12px;
+        border-radius: 12px;
+      }
+
+      .card-top {
+        flex-direction: row;
+        align-items: center;
+        gap: 8px;
+        flex-shrink: 0;
+        padding-top: 1px;
+      }
+
+      .tool-icon { font-size: 20px; }
+
+      .tool-tag {
+        writing-mode: vertical-lr;
+        text-orientation: mixed;
+        transform: rotate(180deg);
+        font-size: 7px;
+        letter-spacing: 0.15em;
+        height: 60px;
+        display: flex;
+        align-items: center;
+      }
+
+      /* Right content block */
+      .card-body {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+        min-width: 0;
+      }
+
+      .tool-name { font-size: 14px; }
+
+      .tool-desc { font-size: 11px; line-height: 1.5; }
+
+      .tool-cta { font-size: 9px; opacity: 0.6; }
+    }
+
+    /* Very small phones */
+    @media (max-width: 360px) {
+      .hub-root { padding: 1.4rem 0.9rem 1.3rem; }
+      .tool-card { padding: 0.9rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="hub-root">
+    <div class="glow-top"></div>
+    <div class="glow-bottom"></div>
+
+    <div class="hub-header">
+      <svg class="btc-mark" viewBox="0 0 56 56" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="28" cy="28" r="26" fill="none" stroke="rgba(255,100,0,0.2)" stroke-width="1"/>
+        <circle cx="28" cy="28" r="22" fill="none" stroke="rgba(255,100,0,0.1)" stroke-width="0.5"/>
+        <circle cx="28" cy="28" r="18" fill="#ff6400"/>
+        <path d="M21.5 16.5h9.5c3 0 5.2 2 5.2 4.6 0 1.6-.8 3-2.1 3.8 2 .7 3.3 2.5 3.3 4.6 0 3.2-2.6 5.5-6.2 5.5H21.5V16.5z M24.8 19.8v4.8h5.8c1.4 0 2.5-1.1 2.5-2.4s-1.1-2.4-2.5-2.4H24.8z M24.8 28.2V34h6.4c1.7 0 3-1.2 3-2.9s-1.3-2.9-3-2.9H24.8z" fill="#fff"/>
+        <line x1="25.5" y1="12" x2="25.5" y2="17" stroke="#ff6400" stroke-width="2.2" stroke-linecap="round"/>
+        <line x1="29.5" y1="12" x2="29.5" y2="17" stroke="#ff6400" stroke-width="2.2" stroke-linecap="round"/>
+        <line x1="25.5" y1="39" x2="25.5" y2="44" stroke="#ff6400" stroke-width="2.2" stroke-linecap="round"/>
+        <line x1="29.5" y1="39" x2="29.5" y2="44" stroke="#ff6400" stroke-width="2.2" stroke-linecap="round"/>
+      </svg>
+
+      <div class="hub-eyebrow">// bitcoin toolkit</div>
+
+      <div class="title-wrap">
+        <div class="hub-title" data-text="PLEB COMMAND CENTER">
+          PLEB <span class="hi">COMMAND</span> CENTER
+        </div>
+      </div>
+
+      <div class="hub-divider"></div>
+      <div class="hub-sub">all tools &nbsp;·&nbsp; one place &nbsp;·&nbsp; no KYC</div>
+    </div>
+
+    <div class="tool-grid">
+
+      <a class="tool-card" href="https://stackfreedom.io" target="_blank" rel="noopener" style="--accent:#ffaa00;">
+        <div class="card-top">
+          <div class="tool-icon">🛡️</div>
+          <div class="tool-tag">// freedom</div>
+        </div>
+        <div class="card-body">
+          <div class="tool-name">StackFreedom</div>
+          <div class="tool-desc">Personal Bitcoin stacking roadmap with sovereignty milestones and your Freedom Target Year.</div>
+          <div class="tool-cta">launch tool <span class="cta-arrow">→</span></div>
+        </div>
+      </a>
+
+      <a class="tool-card" href="https://satchek.com" target="_blank" rel="noopener" style="--accent:#f0c040;">
+        <div class="card-top">
+          <div class="tool-icon">🔮</div>
+          <div class="tool-tag">// future val</div>
+        </div>
+        <div class="card-body">
+          <div class="tool-name">SatChek</div>
+          <div class="tool-desc">See how much today's expenses will be worth in Bitcoin terms in the future. Time preference made real.</div>
+          <div class="tool-cta">launch tool <span class="cta-arrow">→</span></div>
+        </div>
+      </a>
+
+      <a class="tool-card" href="https://satconvert.vercel.app" target="_blank" rel="noopener" style="--accent:#00d4aa;">
+        <div class="card-top">
+          <div class="tool-icon">⚡</div>
+          <div class="tool-tag">// converter</div>
+        </div>
+        <div class="card-body">
+          <div class="tool-name">SatConvert</div>
+          <div class="tool-desc">Instantly convert between sats, BTC, and fiat. Think in sats, live in sats.</div>
+          <div class="tool-cta">launch tool <span class="cta-arrow">→</span></div>
+        </div>
+      </a>
+
+      <a class="tool-card" href="https://stacksim.vercel.app" target="_blank" rel="noopener" style="--accent:#ff6400;">
+        <div class="card-top">
+          <div class="tool-icon">📦</div>
+          <div class="tool-tag">// supply sim</div>
+        </div>
+        <div class="card-body">
+          <div class="tool-name">StackSim</div>
+          <div class="tool-desc">Model how DCA stackers absorb available Bitcoin supply. See your stack vs the market.</div>
+          <div class="tool-cta">launch tool <span class="cta-arrow">→</span></div>
+        </div>
+      </a>
+
+    </div>
+
+    <div class="hub-footer">
+      <span class="footer-by">created by</span>
+      <a class="footer-link" href="https://x.com/aastack" target="_blank" rel="noopener">
+        <svg class="x-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.748l7.73-8.835L1.254 2.25H8.08l4.253 5.622 5.912-5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+        </svg>
+        @aastack
+      </a>
+    </div>
+
+  </div>
+
+</body>
+</html>
