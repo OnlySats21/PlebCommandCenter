@@ -4,11 +4,21 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
   <title>Pleb Command Center — Bitcoin Toolkit by @aastack</title>
-  <meta name="description" content="All your Bitcoin tools in one place. StackSim, StackFreedom, SatChek, SatConvert. Built by @aastack." />
+  <meta name="description" content="All your Bitcoin tools in one place. StackFreedom, SatChek, BTC Loan Calc, Sovereign Scorecard and more. Built by @aastack." />
   <meta property="og:title" content="Pleb Command Center" />
   <meta property="og:description" content="All your Bitcoin tools in one place. No KYC." />
   <meta property="og:type" content="website" />
   <meta name="theme-color" content="#080808" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:site" content="@aastack" />
+  <meta name="twitter:title" content="Pleb Command Center" />
+  <meta name="twitter:description" content="7 free Bitcoin tools. No sign up. No KYC. Built for plebs." />
+  <meta name="twitter:image" content="https://plebcc.com/assets/twitter_card.png" />
+  <meta property="og:title" content="Pleb Command Center" />
+  <meta property="og:description" content="7 free Bitcoin tools. No sign up. No KYC. Built for plebs." />
+  <meta property="og:image" content="https://plebcc.com/assets/twitter_card.png" />
+  <meta property="og:url" content="https://plebcc.com" />
+  <meta property="og:type" content="website" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Share+Tech+Mono&display=swap" rel="stylesheet" />
@@ -73,18 +83,18 @@
       text-align: center;
       position: relative;
       z-index: 2;
-      margin-bottom: 2.4rem;
+      margin-bottom: 2rem;
     }
 
     .btc-mark {
       width: 52px; height: 52px;
       margin: 0 auto 18px;
-      animation: btc-pulse 3s ease-in-out infinite;
+      animation: btc-pulse 2.5s ease-in-out infinite;
     }
 
     @keyframes btc-pulse {
-      0%,100% { filter: drop-shadow(0 0 6px rgba(255,100,0,0.3)); }
-      50%      { filter: drop-shadow(0 0 22px rgba(255,100,0,0.7)); }
+      0%,100% { filter: drop-shadow(0 0 4px rgba(255,100,0,0.3)) drop-shadow(0 0 8px rgba(255,100,0,0.1)); transform: scale(1); }
+      50%      { filter: drop-shadow(0 0 16px rgba(255,100,0,0.9)) drop-shadow(0 0 32px rgba(255,100,0,0.4)); transform: scale(1.06); }
     }
 
     .hub-eyebrow {
@@ -184,7 +194,7 @@
     .tool-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
+      gap: 14px;
       position: relative;
       z-index: 2;
     }
@@ -193,7 +203,7 @@
       background: rgba(255,255,255,0.025);
       border: 1px solid rgba(255,255,255,0.07);
       border-radius: 14px;
-      padding: 1.4rem 1.2rem 1.2rem;
+      padding: 1.5rem 1.3rem 1.3rem;
       text-decoration: none;
       display: flex;
       flex-direction: column;
@@ -252,11 +262,11 @@
       gap: 6px;
     }
 
-    .tool-icon { font-size: 22px; line-height: 1; }
+    .tool-icon { font-size: 24px; line-height: 1; }
 
     .tool-tag {
       font-family: 'Share Tech Mono', monospace;
-      font-size: 9px;
+      font-size: 10px;
       letter-spacing: 0.18em;
       color: var(--accent);
       text-transform: uppercase;
@@ -265,7 +275,7 @@
 
     .tool-name {
       font-weight: 800;
-      font-size: 15px;
+      font-size: 16px;
       color: #fff;
       letter-spacing: 0.08em;
       text-transform: uppercase;
@@ -274,9 +284,9 @@
     }
 
     .tool-desc {
-      font-size: 12px;
+      font-size: 13px;
       font-weight: 400;
-      color: rgba(255,255,255,0.28);
+      color: rgba(255,255,255,0.32);
       line-height: 1.65;
       flex: 1;
     }
@@ -286,7 +296,7 @@
       align-items: center;
       gap: 6px;
       font-family: 'Share Tech Mono', monospace;
-      font-size: 9px;
+      font-size: 10px;
       color: var(--accent);
       letter-spacing: 0.12em;
       opacity: 0.5;
@@ -295,6 +305,14 @@
     }
 
     .cta-arrow { display: inline-block; transition: transform 0.2s; }
+
+    .card-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      min-width: 0;
+    }
 
     /* ── FOOTER ── */
     .hub-footer {
@@ -407,11 +425,11 @@
         min-width: 0;
       }
 
-      .tool-name { font-size: 14px; }
+      .tool-name { font-size: 15px; }
 
-      .tool-desc { font-size: 11px; line-height: 1.5; }
+      .tool-desc { font-size: 12px; line-height: 1.55; color: rgba(255,255,255,0.35); }
 
-      .tool-cta { font-size: 9px; opacity: 0.6; }
+      .tool-cta { font-size: 10px; opacity: 0.6; }
     }
 
     /* Very small phones */
@@ -448,88 +466,100 @@
     <div class="tool-grid">
 
       <a class="tool-card" href="https://stackfreedom.io" target="_blank" rel="noopener" style="--accent:#ffaa00;">
-        <div class="card-top">
-          <div class="tool-icon">🛡️</div>
-          <div class="tool-tag">// freedom</div>
-        </div>
-        <div class="card-body">
-          <div class="tool-name">StackFreedom</div>
-          <div class="tool-desc">Personal Bitcoin stacking roadmap with sovereignty milestones and your Freedom Target Year.</div>
-          <div class="tool-cta">launch tool <span class="cta-arrow">→</span></div>
-        </div>
-      </a>
+              <div class="card-top">
+                <div class="tool-icon">🛡️</div>
+                <div class="tool-tag">// freedom</div>
+              </div>
+              <div class="card-body">
+                <div class="tool-name">StackFreedom</div>
+                <div class="tool-desc">Personal Bitcoin stacking roadmap with sovereignty milestones and your Freedom Target Year.</div>
+                <div class="tool-cta">launch tool <span class="cta-arrow">→</span></div>
+              </div>
+            </a>
 
       <a class="tool-card" href="https://satchek.com" target="_blank" rel="noopener" style="--accent:#f0c040;">
-        <div class="card-top">
-          <div class="tool-icon">🔮</div>
-          <div class="tool-tag">// future val</div>
-        </div>
-        <div class="card-body">
-          <div class="tool-name">SatChek</div>
-          <div class="tool-desc">See how much today's expenses will be worth in Bitcoin terms in the future. Time preference made real.</div>
-          <div class="tool-cta">launch tool <span class="cta-arrow">→</span></div>
-        </div>
-      </a>
+              <div class="card-top">
+                <div class="tool-icon">🔮</div>
+                <div class="tool-tag">// future val</div>
+              </div>
+              <div class="card-body">
+                <div class="tool-name">SatChek</div>
+                <div class="tool-desc">See how much today's expenses will be worth in Bitcoin terms in the future. Time preference made real.</div>
+                <div class="tool-cta">launch tool <span class="cta-arrow">→</span></div>
+              </div>
+            </a>
 
-      <a class="tool-card" href="https://satconvert.vercel.app" target="_blank" rel="noopener" style="--accent:#00d4aa;">
-        <div class="card-top">
-          <div class="tool-icon">⚡</div>
-          <div class="tool-tag">// converter</div>
-        </div>
-        <div class="card-body">
-          <div class="tool-name">SatConvert</div>
-          <div class="tool-desc">Instantly convert between sats, BTC, and fiat. Think in sats, live in sats.</div>
-          <div class="tool-cta">launch tool <span class="cta-arrow">→</span></div>
-        </div>
-      </a>
-
-      <a class="tool-card" href="https://satoshimachine.vercel.app" target="_blank" rel="noopener" style="--accent:#ff4500;">
-        <div class="card-top">
-          <div class="tool-icon">🕰️</div>
-          <div class="tool-tag">// red pill</div>
-        </div>
-        <div class="card-body">
-          <div class="tool-name">Satoshi Machine</div>
-          <div class="tool-desc">Type any item, pick a year — see what it cost then, what inflation did to it, and what Bitcoin would have returned instead.</div>
-          <div class="tool-cta">launch tool <span class="cta-arrow">→</span></div>
-        </div>
-      </a>
+      <a class="tool-card" href="https://btcloancalculator.vercel.app" target="_blank" rel="noopener" style="--accent:#ff2200;">
+              <div class="card-top">
+                <div class="tool-icon">🏦</div>
+                <div class="tool-tag">// loan calculator</div>
+              </div>
+              <div class="card-body">
+                <div class="tool-name">BTC Loan Calc</div>
+                <div class="tool-desc">Sell or borrow against your Bitcoin? Live liquidation risk, tax impact, side-by-side comparison.</div>
+                <div class="tool-cta">launch tool <span class="cta-arrow">→</span></div>
+              </div>
+            </a>
 
       <a class="tool-card" href="https://staysovereign.vercel.app" target="_blank" rel="noopener" style="--accent:#a78bfa;">
-        <div class="card-top">
-          <div class="tool-icon">🔐</div>
-          <div class="tool-tag">// self-custody</div>
-        </div>
-        <div class="card-body">
-          <div class="tool-name">Sovereign Scorecard</div>
-          <div class="tool-desc">12-question Bitcoin self-custody quiz. Get a Sovereignty Score 0–100, personalized security recommendations, and a grade. Every pleb should take this.</div>
-          <div class="tool-cta">launch tool <span class="cta-arrow">→</span></div>
-        </div>
-      </a>
+              <div class="card-top">
+                <div class="tool-icon">🔐</div>
+                <div class="tool-tag">// self-custody</div>
+              </div>
+              <div class="card-body">
+                <div class="tool-name">Sovereign Scorecard</div>
+                <div class="tool-desc">12-question Bitcoin self-custody quiz. Get a Sovereignty Score 0–100, personalized security recommendations, and a grade. Every pleb should take this.</div>
+                <div class="tool-cta">launch tool <span class="cta-arrow">→</span></div>
+              </div>
+            </a>
+
+      <a class="tool-card" href="https://satconvert.vercel.app" target="_blank" rel="noopener" style="--accent:#00d4aa;">
+              <div class="card-top">
+                <div class="tool-icon">⚡</div>
+                <div class="tool-tag">// converter</div>
+              </div>
+              <div class="card-body">
+                <div class="tool-name">SatConvert</div>
+                <div class="tool-desc">Instantly convert between sats, BTC, and fiat. Think in sats, live in sats.</div>
+                <div class="tool-cta">launch tool <span class="cta-arrow">→</span></div>
+              </div>
+            </a>
+
+      <a class="tool-card" href="https://satoshimachine.vercel.app" target="_blank" rel="noopener" style="--accent:#ff4500;">
+              <div class="card-top">
+                <div class="tool-icon">🕰️</div>
+                <div class="tool-tag">// red pill</div>
+              </div>
+              <div class="card-body">
+                <div class="tool-name">Satoshi Machine</div>
+                <div class="tool-desc">Type any item, pick a year — see what it cost then, what inflation did to it, and what Bitcoin would have returned instead.</div>
+                <div class="tool-cta">launch tool <span class="cta-arrow">→</span></div>
+              </div>
+            </a>
 
       <a class="tool-card" href="https://halvening.vercel.app" target="_blank" rel="noopener" style="--accent:#ff8c00;">
-        <div class="card-top">
-          <div class="tool-icon">⚡</div>
-          <div class="tool-tag">// halving clock</div>
-        </div>
-        <div class="card-body">
-          <div class="tool-name">Halvening</div>
-          <div class="tool-desc">Live countdown to the next Bitcoin halving. BTC price, cycle progress, all 5 halving cards with historical returns. Supply is math.</div>
-          <div class="tool-cta">launch tool <span class="cta-arrow">→</span></div>
-        </div>
-      </a>
+              <div class="card-top">
+                <div class="tool-icon">⚡</div>
+                <div class="tool-tag">// halving clock</div>
+              </div>
+              <div class="card-body">
+                <div class="tool-name">Halvening</div>
+                <div class="tool-desc">Live countdown to the next Bitcoin halving. BTC price, cycle progress, all 5 halving cards with historical returns. Supply is math.</div>
+                <div class="tool-cta">launch tool <span class="cta-arrow">→</span></div>
+              </div>
+            </a>
 
       <a class="tool-card" href="https://stacksim.vercel.app" target="_blank" rel="noopener" style="--accent:#ff6400;">
-        <div class="card-top">
-          <div class="tool-icon">📦</div>
-          <div class="tool-tag">// supply sim</div>
-        </div>
-        <div class="card-body">
-          <div class="tool-name">StackSim</div>
-          <div class="tool-desc">Model how DCA stackers absorb available Bitcoin supply. See your stack vs the market.</div>
-          <div class="tool-cta">launch tool <span class="cta-arrow">→</span></div>
-        </div>
-      </a>
+              <div class="card-top">
+                <div class="tool-icon">📦</div>
+                <div class="tool-tag">// supply sim</div>
+              </div>
+              <div class="card-body">
+                <div class="tool-name">StackSim</div>
+                <div class="tool-desc">Model how DCA stackers absorb available Bitcoin supply. See your stack vs the market.</div>
+                <div class="tool-cta">launch tool <span class="cta-arrow">→</span></div>
+              </div>
+            </a>
 
     </div>
 
@@ -542,6 +572,8 @@
         @aastack
       </a>
     </div>
+
+  
 
   </div>
 
