@@ -1,596 +1,1268 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
-  <title>Pleb Command Center — Bitcoin Toolkit by @aastack</title>
-  <meta name="description" content="All your Bitcoin tools in one place. StackFreedom, SatChek, BTC Loan Calc, Sovereign Scorecard and more. Built by @aastack." />
-  <meta property="og:title" content="Pleb Command Center" />
-  <meta property="og:description" content="All your Bitcoin tools in one place. No KYC." />
-  <meta property="og:type" content="website" />
-  <meta name="theme-color" content="#080808" />
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:site" content="@aastack" />
-  <meta name="twitter:title" content="Pleb Command Center" />
-  <meta name="twitter:description" content="9 free Bitcoin tools. No sign up. No KYC. Built for plebs." />
-  <meta name="twitter:image" content="https://plebcc.com/assets/twitter_card.png" />
-  <meta property="og:title" content="Pleb Command Center" />
-  <meta property="og:description" content="9 free Bitcoin tools. No sign up. No KYC. Built for plebs." />
-  <meta property="og:image" content="https://plebcc.com/assets/twitter_card.png" />
-  <meta property="og:url" content="https://plebcc.com" />
-  <meta property="og:type" content="website" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Share+Tech+Mono&display=swap" rel="stylesheet" />
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>$1M BTC</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="A daily Bitcoin meter calibrated on every cycle since 2013: it scores today's conditions and the long-run adoption trend, then runs 2,000 simulated futures to estimate when BTC first hits $1,000,000.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800;900&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: an instrument panel you read top to bottom — today's reading, what moved it, a what-if lab, the futures, then the inputs and the manual. */
+:root{
+  --bg:#0e1219; --panel:#151b24; --panel-2:#1b2330; --line:#2a3443; --fg:#e9edf2; --muted:#94a1b3;
+  --orange:#f7931a; --orange-soft:rgba(247,147,26,.15); --teal:#3fb6a8; --teal-soft:rgba(63,182,168,.15);
+  --good:#4cc38a; --warn:#e8b33d; --bad:#e5604f; --dial:#efe9dd; --dial-ink:#1b1f26; --ink-on-orange:#160f05;
+  --display:"Big Shoulders Display","Arial Narrow",Impact,sans-serif;
+  --body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+  color-scheme:dark;
+}
+@media (prefers-color-scheme: light){:root:not([data-theme="dark"]){
+  --bg:#eef0f3; --panel:#ffffff; --panel-2:#f4f5f8; --line:#d8dce3; --fg:#141a22; --muted:#5b6677;
+  --orange:#d9790b; --orange-soft:rgba(217,121,11,.12); --teal:#1d8a7e; --teal-soft:rgba(29,138,126,.12);
+  --good:#21875a; --warn:#a97c0c; --bad:#c03f2e; --dial:#f8f4eb; --dial-ink:#1b1f26; --ink-on-orange:#fff; color-scheme:light;}}
+:root[data-theme="light"]{
+  --bg:#eef0f3; --panel:#ffffff; --panel-2:#f4f5f8; --line:#d8dce3; --fg:#141a22; --muted:#5b6677;
+  --orange:#d9790b; --orange-soft:rgba(217,121,11,.12); --teal:#1d8a7e; --teal-soft:rgba(29,138,126,.12);
+  --good:#21875a; --warn:#a97c0c; --bad:#c03f2e; --dial:#f8f4eb; --dial-ink:#1b1f26; --ink-on-orange:#fff; color-scheme:light;}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+.simple .nerd{display:none!important}
+.easy{display:none!important}.simple .easy{display:grid!important}
+.bigodds{grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.bigodds div{background:var(--panel-2);border-radius:12px;padding:12px 14px;display:grid;gap:2px}
+.bigodds b{font-family:var(--display);font-weight:900;font-size:clamp(38px,6vw,52px);line-height:1;color:var(--orange)}
+.bigodds span{font-size:13px;color:var(--muted)}
+.hook{font-family:var(--display);font-weight:800;font-size:clamp(22px,3.4vw,30px);text-transform:uppercase;letter-spacing:.02em;line-height:1}
+.nerdcta{display:grid;justify-items:center;gap:8px;text-align:center;padding:22px;border:1px dashed var(--line);border-radius:14px}
+.nerdcta p{color:var(--muted);max-width:52ch}
+/* update bar */
+.updbar{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 16px;padding:10px 14px;border-radius:12px}
+.upd-l{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;min-width:0}
+.upd-l b{font-family:var(--mono);font-size:13.5px;font-weight:600}
+.upd-l .chips{display:flex;flex-wrap:wrap;gap:6px}
+.dot{width:10px;height:10px;border-radius:50%;background:var(--warn);box-shadow:0 0 0 4px rgba(232,179,61,.15);flex:none}
+.dot.on{background:var(--good);box-shadow:0 0 0 4px rgba(76,195,138,.18)}
+@media (prefers-reduced-motion:no-preference){.dot.on{animation:pulse 2.4s ease-in-out infinite}@keyframes pulse{50%{box-shadow:0 0 0 7px rgba(76,195,138,.06)}}}
+#updBtn{display:inline-flex;align-items:center;gap:8px}
+#updBtn .spin{width:14px;height:14px;border-radius:50%;border:2px solid currentColor;border-right-color:transparent;display:inline-block}
+@media (prefers-reduced-motion:no-preference){#updBtn.busy .spin{animation:spin .8s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}}
+#updBtn.busy{opacity:.8;pointer-events:none}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(18px + env(safe-area-inset-bottom,0px));z-index:30;background:var(--fg);color:var(--bg);
+  padding:11px 16px;border-radius:10px;font-size:13.5px;max-width:min(560px,calc(100% - 32px));box-shadow:0 10px 30px rgba(0,0,0,.35);line-height:1.4}
+.since{font-size:13.5px;color:var(--muted);background:var(--panel-2);border-radius:8px;padding:7px 11px;justify-self:start}
+.since b{font-weight:600}
+/* track record */
+.rec-tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px}
+.rec-tiles div{background:var(--panel-2);border-radius:12px;padding:12px 14px;display:grid;gap:4px;align-content:start}
+.rec-tiles b{font-family:var(--display);font-weight:900;font-size:42px;line-height:1;color:var(--teal)}
+.rec-tiles span{font-size:12.5px;color:var(--muted);line-height:1.4}
+.bt td small{display:block;color:var(--muted);font-size:11px}
+.spinrow{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+@media (max-width:620px){.spinrow{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.spinrow button{background:var(--panel-2);border:1px solid var(--line);border-radius:10px;padding:11px 8px;font-weight:600;cursor:pointer;transition:transform .12s,border-color .15s}
+.spinrow button:hover{transform:translateY(-2px);border-color:var(--muted)}
+.spinrow button[data-k="lucky"]{color:var(--good)}.spinrow button[data-k="unlucky"]{color:var(--bad)}.spinrow button[data-k="typical"]{color:var(--orange)}
+.spinrow button[aria-pressed="true"]{border-color:currentColor;background:var(--panel)}
+.story{background:var(--panel-2);border-radius:12px;padding:14px 16px;display:grid;gap:10px}
+.story-empty{color:var(--muted);font-size:14px}
+.story-h{display:grid;gap:4px}
+.story-h .tag{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--teal)}
+.story-h h3{font-family:var(--display);font-weight:900;font-size:clamp(28px,4vw,38px);text-transform:uppercase;line-height:1}
+.story-v{font-size:15px}.story-v b{color:var(--orange)}
+.story-why{font-size:14.5px;background:var(--panel);border-left:3px solid var(--teal);border-radius:6px;padding:9px 12px}.story-why b{color:var(--teal)}
+.why{margin:0;padding-left:20px;display:grid;gap:8px;font-size:14px;line-height:1.5}
+.why b{font-weight:600}
+.decide{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+.dec{display:grid;grid-template-columns:auto minmax(0,1fr);gap:12px;align-items:start;background:var(--panel-2);border-radius:12px;padding:13px 14px}
+.dec .num{font-family:var(--display);font-weight:900;font-size:34px;line-height:.9;color:var(--orange)}
+.dec h3{font-size:15px;margin-bottom:4px}.dec p{font-size:13.5px;color:var(--muted);line-height:1.45}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:15px;line-height:1.5;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:18px 48px}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+.wrap{max-width:1180px;margin:0 auto;display:grid;gap:26px}
+section{scroll-margin-top:70px}
+h1,h2,h3{margin:0;text-wrap:balance}
+p{margin:0}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.label{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+a{color:var(--orange)}
+button,select,input{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--orange);outline-offset:2px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:14px}
+.btn{background:var(--orange);color:var(--ink-on-orange);border:0;border-radius:9px;padding:9px 15px;font-weight:600;cursor:pointer;white-space:nowrap;transition:transform .12s}
+.btn:hover{transform:translateY(-1px)}
+.btn:active{transform:translateY(1px)}
+.btn.ghost{background:transparent;color:var(--fg);border:1px solid var(--line)}
+.chip{font-family:var(--mono);font-size:11.5px;padding:4px 9px;border-radius:99px;border:1px solid var(--line);color:var(--muted);white-space:nowrap}
+.chip.live{border-color:var(--good);color:var(--good)}
+.chip.snap{border-color:var(--warn);color:var(--warn)}
 
-    html { -webkit-text-size-adjust: 100%; }
+/* header + nav */
+.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:14px}
+.brand h1{font-family:var(--display);font-weight:900;font-size:clamp(44px,8vw,80px);line-height:.88;letter-spacing:.01em;text-transform:uppercase}
+.brand h1 span{color:var(--orange)}
+.brand p{margin-top:8px;color:var(--muted);max-width:58ch}
+.actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+nav.tabs{position:sticky;top:env(safe-area-inset-top,0px);z-index:9;background:var(--bg);margin-inline:-4px;padding:8px 4px;border-bottom:1px solid var(--line);
+  display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}
+nav.tabs::-webkit-scrollbar{display:none}
+nav.tabs a{font-family:var(--mono);font-size:12px;text-decoration:none;color:var(--muted);padding:6px 11px;border-radius:99px;border:1px solid transparent;white-space:nowrap}
+nav.tabs a:hover,nav.tabs a.on{color:var(--fg);border-color:var(--line);background:var(--panel)}
+.whatbar{position:sticky;top:calc(env(safe-area-inset-top,0px) + 50px);z-index:8;display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;justify-content:space-between;
+  background:var(--orange);color:var(--ink-on-orange);border-radius:10px;padding:9px 14px;font-weight:500}
+.whatbar button{background:var(--ink-on-orange);color:var(--orange);border:0;border-radius:7px;padding:5px 11px;font-weight:600;cursor:pointer}
 
-    body {
-      min-height: 100vh;
-      min-height: 100dvh;
-      background: #060606;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: 'Montserrat', sans-serif;
-      padding: 1.5rem 1rem;
-    }
+/* section heads */
+.sec-h{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:6px 18px;margin-bottom:12px}
+.sec-h h2{font-family:var(--display);font-weight:800;font-size:clamp(26px,4vw,34px);text-transform:uppercase;letter-spacing:.02em;line-height:1}
+.sec-h p{color:var(--muted);font-size:14px;max-width:62ch}
+.kicker{font-family:var(--mono);font-size:11px;color:var(--orange);letter-spacing:.14em;text-transform:uppercase;margin-bottom:4px}
 
-    .hub-root {
-      width: 100%;
-      max-width: 760px;
-      background: #080808;
-      border-radius: 18px;
-      border: 1px solid rgba(255,255,255,0.05);
-      padding: 2.8rem 2rem 2.2rem;
-      position: relative;
-      overflow: hidden;
-    }
+/* hero */
+.hero{display:grid;grid-template-columns:minmax(0,370px) minmax(0,1fr);gap:18px}
+@media (max-width:840px){.hero{grid-template-columns:minmax(0,1fr)}}
+.gaugebox{padding:16px 16px 18px;display:grid;justify-items:center;gap:4px;align-content:start}
+.gaugebox svg{width:100%;max-width:340px;height:auto}
+.verdict{font-family:var(--display);font-weight:800;font-size:30px;text-transform:uppercase;letter-spacing:.03em;line-height:1}
+.scale{display:grid;grid-template-columns:repeat(5,1fr);gap:3px;width:100%;margin-top:10px}
+.scale div{font-family:var(--mono);font-size:10px;text-align:center;padding:5px 2px;border-radius:5px;background:var(--panel-2);color:var(--muted);line-height:1.25}
+.scale div.on{color:var(--fg);outline:1.5px solid currentColor}
+.readout{padding:20px 22px;display:grid;gap:18px;align-content:start}
+.plain{font-size:17px;line-height:1.45;max-width:62ch}
+.plain b{color:var(--orange);font-weight:600}
+.bigdate{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 16px}
+.bigdate .v{font-family:var(--display);font-weight:900;font-size:clamp(58px,10vw,112px);line-height:.82;color:var(--orange);font-variant-numeric:tabular-nums}
+.bigdate .s{color:var(--muted);max-width:30ch;font-size:13.5px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+@media (max-width:640px){.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.kpi{background:var(--panel-2);padding:11px 13px;display:grid;gap:1px;min-width:0;align-content:start}
+.kpi .n{font-family:var(--display);font-weight:800;font-size:30px;line-height:1.05}
+.kpi .d{font-size:12px;color:var(--muted);line-height:1.35}
+.odds{display:flex;gap:5px;align-items:flex-end;height:104px}
+.odds .bar{flex:1;display:flex;flex-direction:column;justify-content:flex-end;gap:3px;min-width:0;height:100%}
+.odds .fill{background:var(--orange-soft);border-top:2px solid var(--orange);border-radius:3px 3px 0 0}
+.odds .bar.hl .fill{background:var(--orange)}
+.odds .pct{font-family:var(--mono);font-size:10.5px;text-align:center}
+.odds .yr{font-family:var(--mono);font-size:10.5px;color:var(--muted);text-align:center}
 
-    .hub-root::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,0.04) 4px);
-      pointer-events: none;
-      z-index: 0;
-    }
+/* needle contributions */
+.needle{padding:18px 20px;display:grid;gap:14px}
+.contrib{display:grid;gap:7px}
+.crow{display:grid;grid-template-columns:minmax(110px,170px) minmax(0,1fr) 56px;gap:10px;align-items:center}
+.crow .nm{font-size:13.5px}
+.crow .nm small{display:block;color:var(--muted);font-family:var(--mono);font-size:10.5px}
+.ctrack{position:relative;height:22px;background:var(--panel-2);border-radius:5px}
+.ctrack::after{content:"";position:absolute;left:50%;top:-3px;bottom:-3px;width:1.5px;background:var(--muted);opacity:.6}
+.cbar{position:absolute;top:3px;bottom:3px;border-radius:3px;transition:left .5s,width .5s}
+.crow .pts{font-family:var(--mono);font-size:13px;text-align:right;font-weight:600}
+.ctot{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:13.5px;color:var(--muted);border-top:1px solid var(--line);padding-top:10px}
+.ctot b{color:var(--fg)}
+@media (max-width:520px){.crow{grid-template-columns:96px minmax(0,1fr) 46px}}
 
-    .glow-top {
-      position: absolute;
-      top: -120px; left: 50%;
-      transform: translateX(-50%);
-      width: 100%; height: 340px;
-      background: radial-gradient(ellipse, rgba(255,90,0,0.1) 0%, transparent 65%);
-      pointer-events: none;
-      z-index: 0;
-    }
+/* what-if */
+.lab{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,330px);gap:16px}
+@media (max-width:840px){.lab{grid-template-columns:minmax(0,1fr)}}
+.scen{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
+.sc{text-align:left;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 13px;cursor:pointer;display:grid;gap:3px;transition:border-color .15s,transform .15s,background .15s}
+.sc:hover{transform:translateY(-2px);border-color:var(--muted)}
+.sc[aria-pressed="true"]{border-color:var(--orange);background:var(--orange-soft)}
+.sc .t{font-weight:600;font-size:14.5px}
+.sc .d{font-size:12.5px;color:var(--muted);line-height:1.35}
+.sc .tag{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase}
+.sc .tag.up{color:var(--good)} .sc .tag.dn{color:var(--bad)}
+.labout{padding:18px;display:grid;gap:10px;align-content:start}
+.delta{font-family:var(--display);font-weight:900;font-size:56px;line-height:.9}
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line);border-radius:8px;overflow:hidden}
+.compare div{background:var(--panel-2);padding:9px 11px}
+.compare .n{font-family:var(--mono);font-size:15px;font-weight:600}
 
-    .glow-bottom {
-      position: absolute;
-      bottom: -80px; left: 50%;
-      transform: translateX(-50%);
-      width: 400px; height: 200px;
-      background: radial-gradient(ellipse, rgba(255,90,0,0.04) 0%, transparent 70%);
-      pointer-events: none;
-      z-index: 0;
-    }
+/* road + chart */
+.boxpad{padding:18px 20px;display:grid;gap:12px}
+.scrollx{overflow-x:auto}
+.scrollx svg{display:block;min-width:660px;width:100%;height:auto}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:12.5px;color:var(--muted)}
+.legend i{display:inline-block;width:18px;height:10px;border-radius:2px;margin-right:6px;vertical-align:middle}
+.futurecard{display:grid;grid-template-columns:auto minmax(0,1fr);gap:14px;align-items:center;background:var(--panel-2);border-radius:10px;padding:12px 14px}
+.futurecard .no{font-family:var(--display);font-weight:900;font-size:34px;color:var(--teal);line-height:1}
+.futurecard p{font-size:14px}
+@media (prefers-reduced-motion:no-preference){
+  .sample.draw{stroke-dasharray:var(--len);stroke-dashoffset:var(--len);animation:draw 2.4s ease-out forwards}
+  @keyframes draw{to{stroke-dashoffset:0}}
+  #needle{transition:transform .9s cubic-bezier(.2,.9,.25,1.15)}
+  .odds .fill{transition:height .5s ease}
+}
 
-    /* ── HEADER ── */
-    .hub-header {
-      text-align: center;
-      position: relative;
-      z-index: 2;
-      margin-bottom: 2rem;
-    }
+/* inputs */
+.board{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:14px}
+.f{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 14px 12px;display:grid;gap:10px;align-content:start;position:relative;overflow:hidden}
+.f::before{content:"";position:absolute;inset:0 auto 0 0;width:4px;background:var(--sev,var(--line))}
+.f .hd{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.f h3{font-size:15px;font-weight:600}
+.f .w{font-family:var(--mono);font-size:11px;color:var(--muted)}
+.pill{font-family:var(--mono);font-weight:600;font-size:13px;padding:2px 9px;border-radius:99px;background:var(--panel-2);border:1px solid var(--sev,var(--line));color:var(--sev,var(--fg));white-space:nowrap}
+.f label{display:grid;gap:4px;font-size:12.5px;color:var(--muted)}
+.f input[type=number],.addnews input,.addnews select{background:var(--panel-2);border:1px solid var(--line);border-radius:8px;padding:7px 9px;width:100%;min-width:0;font-family:var(--mono);font-size:14px}
+.f input[type=range]{width:100%;accent-color:var(--orange)}
+.f .src{font-size:11.5px;color:var(--muted);line-height:1.45;border-top:1px dashed var(--line);padding-top:8px}
+.f details summary{cursor:pointer;font-size:12.5px;color:var(--orange);list-style:none}
+.f details summary::-webkit-details-marker{display:none}
+.f details summary::before{content:"+ ";font-family:var(--mono)}
+.f details[open] summary::before{content:"– "}
+.f details p{font-size:12.5px;color:var(--muted);margin-top:6px;line-height:1.45}
+.f details p b{color:var(--fg);font-weight:500}
+.seg{display:flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;flex-wrap:wrap}
+.seg button{flex:1 1 auto;background:var(--panel-2);border:0;padding:7px 6px;font-size:12px;cursor:pointer;color:var(--muted)}
+.seg button+button{border-left:1px solid var(--line)}
+.seg button[aria-pressed="true"]{background:var(--orange-soft);color:var(--orange);font-weight:600}
+.rowv{display:flex;justify-content:space-between;font-family:var(--mono);font-size:11.5px;color:var(--muted)}
 
-    .btc-mark {
-      width: 52px; height: 52px;
-      margin: 0 auto 18px;
-      animation: btc-pulse 2.5s ease-in-out infinite;
-    }
+/* news + history */
+.two{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:14px}
+@media (max-width:840px){.two{grid-template-columns:minmax(0,1fr)}}
+.box{padding:16px 18px;display:grid;gap:12px;align-content:start}
+.news{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.news li{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px;align-items:center;padding:8px 10px;border-radius:8px;background:var(--panel-2)}
+.news li.old{opacity:.5}
+.news .imp{font-family:var(--mono);font-weight:600;font-size:13px;width:34px;text-align:center}
+.news .t{font-size:13.5px;min-width:0;overflow-wrap:anywhere}
+.news .dt{font-family:var(--mono);font-size:11px;color:var(--muted);display:block}
+.news button{background:none;border:0;color:var(--muted);cursor:pointer;font-size:16px;padding:2px 6px}
+.addnews{display:grid;grid-template-columns:minmax(0,1fr) 84px auto;gap:8px}
+.histempty{color:var(--muted);font-size:13.5px;border:1px dashed var(--line);border-radius:8px;padding:14px}
+.histsvg svg{width:100%;height:auto;display:block}
+table.hist{width:100%;border-collapse:collapse;font-size:12.5px}
+table.hist td,table.hist th{padding:5px 6px;border-bottom:1px solid var(--line);text-align:right}
+table.hist th{color:var(--muted);font-weight:500;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase}
+table.hist td:first-child,table.hist th:first-child{text-align:left}
 
-    @keyframes btc-pulse {
-      0%,100% { filter: drop-shadow(0 0 4px rgba(255,100,0,0.3)) drop-shadow(0 0 8px rgba(255,100,0,0.1)); transform: scale(1); }
-      50%      { filter: drop-shadow(0 0 16px rgba(255,100,0,0.9)) drop-shadow(0 0 32px rgba(255,100,0,0.4)); transform: scale(1.06); }
-    }
+/* how it works */
+.steps{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;counter-reset:st}
+@media (max-width:940px){.steps{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:520px){.steps{grid-template-columns:minmax(0,1fr)}}
+.step{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px;display:grid;gap:6px;align-content:start;position:relative}
+.step .num{font-family:var(--display);font-weight:900;font-size:42px;line-height:.85;color:var(--orange)}
+.step h3{font-size:15px}
+.step p{font-size:13px;color:var(--muted);line-height:1.45}
+.step .live{font-family:var(--mono);font-size:12.5px;color:var(--fg);background:var(--panel-2);border-radius:7px;padding:7px 9px;line-height:1.4}
+.gloss{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:10px 26px;margin-top:16px}
+.gloss div{font-size:13.5px;color:var(--muted);line-height:1.45}
+.gloss b{color:var(--fg);font-weight:600;display:block}
+.foot{color:var(--muted);font-size:12px;text-align:center;max-width:80ch;margin:0 auto;line-height:1.5}
+</style>
+<style>
+/* v3 additions */
+.adopt{width:100%;display:grid;gap:5px;margin-top:12px;border-top:1px solid var(--line);padding-top:12px}
+.adopt .row{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.adopt .row b{font-family:var(--display);font-weight:800;font-size:24px}
+.adopt .track{height:10px;border-radius:5px;background:var(--panel-2);position:relative;overflow:hidden}
+.adopt .track span{position:absolute;inset:0 auto 0 0;border-radius:5px;background:var(--teal);transition:width .6s}
+.adopt p{font-size:12px;color:var(--muted);line-height:1.4}
+.needles{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:14px}
+@media (max-width:900px){.needles{grid-template-columns:minmax(0,1fr)}}
+.needle h3{font-family:var(--display);font-weight:800;font-size:21px;text-transform:uppercase;letter-spacing:.02em}
+.needle .lead{font-size:13px;color:var(--muted)}
+.drv{display:grid;gap:7px}
+.drow{display:grid;grid-template-columns:minmax(140px,240px) minmax(0,1fr) 88px;gap:10px;align-items:center}
+.drow .nm{font-size:13.5px}
+.drow .nm small{display:block;color:var(--muted);font-size:11.5px;line-height:1.3}
+.drow .v{font-family:var(--mono);font-size:12.5px;text-align:right}
+.drow.basehl .nm{font-weight:600}
+@media (max-width:560px){.drow{grid-template-columns:110px minmax(0,1fr) 70px}}
+.bt{width:100%;border-collapse:collapse;font-size:13px}
+.bt th,.bt td{padding:7px 8px;border-bottom:1px solid var(--line);text-align:right}
+.bt th{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:500}
+.bt td:first-child,.bt th:first-child{text-align:left}
+.bt .grp td{font-weight:600;color:var(--fg);background:var(--panel-2)}
+.bt .err{font-family:var(--mono);font-weight:600}
+.checkgrid{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:16px}
+@media (max-width:900px){.checkgrid{grid-template-columns:minmax(0,1fr)}}
+.callout{background:var(--panel-2);border-radius:10px;padding:12px 14px;font-size:13.5px;line-height:1.5}
+.callout b{color:var(--orange);font-weight:600}
+.grouph{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 12px;margin:18px 0 10px}
+.grouph h3{font-family:var(--display);font-weight:800;font-size:22px;text-transform:uppercase;letter-spacing:.02em}
+.grouph p{font-size:13px;color:var(--muted)}
+.overlay{position:fixed;inset:0;z-index:20;background:rgba(5,8,12,.72);display:grid;place-items:center;
+  padding:max(16px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) max(16px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+.sharebox{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px;display:grid;gap:12px;width:min(760px,100%);max-height:100%;overflow:auto}
+.sharebox img{width:100%;border-radius:8px;border:1px solid var(--line);display:block}
+.sharebox .note{font-size:12.5px;color:var(--muted)}
+.postcheck{display:grid;gap:8px;background:var(--panel-2);border-radius:10px;padding:12px 14px}
+.checks{list-style:none;margin:0;padding:0;display:grid;gap:7px}
+.checks li{font-size:13px;border-left:3px solid var(--good);padding-left:10px}
+.checks li.warn{border-left-color:var(--warn)}
+.checks li span{display:block;color:var(--muted);font-size:12.5px;line-height:1.4}
+#postText{width:100%;background:var(--panel-2);border:1px solid var(--line);border-radius:10px;padding:12px;font-family:var(--body);font-size:14px;line-height:1.5;resize:vertical;min-height:220px}
+</style>
 
-    .hub-eyebrow {
-      font-family: 'Share Tech Mono', monospace;
-      font-size: 10px;
-      letter-spacing: 0.3em;
-      color: #ff6400;
-      opacity: 0.6;
-      text-transform: uppercase;
-      margin-bottom: 10px;
-    }
+<script>try{if(localStorage.getItem("mm3.nerd")!=="true")document.body.classList.add("simple")}catch(e){document.body.classList.add("simple")}</script>
+<div class="wrap">
+  <header class="top">
+    <div class="brand">
+      <div class="label"><a href="https://plebcc.com" style="color:inherit;text-decoration:none">← Pleb Command Center</a> · Bitcoin</div>
+      <h1><span>$1M</span> BTC</h1>
+      <p>When does Bitcoin hit a million? One meter, updated daily, built on every Bitcoin cycle since 2013.</p>
+    </div>
+    <div class="actions">
+      <button class="btn ghost nerd" id="logBtn" type="button">Log today</button>
+      <button class="btn ghost" id="modeBtn" type="button" aria-pressed="false">Nerd mode: off</button>
+      <button class="btn ghost" id="shareBtn" type="button">Make X post</button>
+    </div>
+  </header>
 
-    .title-wrap {
-      position: relative;
-      display: inline-block;
-      margin-bottom: 14px;
-      max-width: 100%;
-    }
+  <div class="panel updbar">
+    <div class="upd-l"><span class="dot" id="updDot"></span><div><div class="label">Data as of</div><b id="updWhen">Oct 28, 2026, 6:00 PM ET</b></div><div class="chips" id="updChips"><span class="chip snap">Loading…</span></div></div>
+    <button class="btn" id="updBtn" type="button"><span class="spin" aria-hidden="true"></span><span id="updTxt">Update now</span></button>
+  </div>
+  <div class="toast" id="toast" role="status" hidden></div>
+  <nav class="tabs nerd" aria-label="Sections">
+    <a href="#reading">Reading</a><a href="#needle">What moved it</a><a href="#lab">What-if lab</a><a href="#road">Road to $1M</a><a href="#record">Track record</a><a href="#drivers">What drives the date</a><a href="#check">Model check</a><a href="#inputs">Inputs</a><a href="#how">How it works</a>
+  </nav>
+  <div class="whatbar" id="whatbar" hidden><span id="whattext">What-if mode is on.</span><button type="button" id="whatreset">Back to real data</button></div>
 
-    .hub-title {
-      font-weight: 800;
-      font-size: clamp(24px, 7vw, 48px);
-      letter-spacing: clamp(0.06em, 1.5vw, 0.14em);
-      text-transform: uppercase;
-      color: #fff;
-      line-height: 1.1;
-      position: relative;
-      display: inline-block;
-      animation: glitch-main 5s infinite;
-    }
-
-    .hub-title .hi { color: #ff6400; }
-
-    @keyframes glitch-main {
-      0%,90%,100% { transform: translate(0,0); filter: none; }
-      91% { transform: translate(-3px,1px); filter: hue-rotate(90deg) brightness(1.3); }
-      92% { transform: translate(3px,-1px); filter: hue-rotate(-90deg); }
-      93% { transform: translate(-1px,0); filter: none; }
-      95% { transform: translate(2px,-2px); filter: brightness(1.5); }
-      96% { transform: translate(0,0); filter: none; }
-    }
-
-    .hub-title::before,
-    .hub-title::after {
-      content: attr(data-text);
-      position: absolute;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      font-weight: 800;
-      pointer-events: none;
-    }
-
-    .hub-title::before {
-      color: #00e5ff;
-      animation: glitch-b 5s infinite;
-      clip-path: polygon(0 10%, 100% 10%, 100% 35%, 0 35%);
-      opacity: 0;
-    }
-
-    .hub-title::after {
-      color: #ff003c;
-      animation: glitch-a 5s infinite;
-      clip-path: polygon(0 60%, 100% 60%, 100% 82%, 0 82%);
-      opacity: 0;
-    }
-
-    @keyframes glitch-b {
-      0%,89%,100% { opacity:0; transform:translate(0,0); }
-      91% { opacity:0.8; transform:translate(-5px,0); }
-      92% { opacity:0; }
-      94% { opacity:0.5; transform:translate(4px,0); }
-      95% { opacity:0; }
-    }
-
-    @keyframes glitch-a {
-      0%,90%,100% { opacity:0; transform:translate(0,0); }
-      92% { opacity:0.7; transform:translate(5px,0); }
-      93% { opacity:0; }
-      95% { opacity:0.4; transform:translate(-3px,0); }
-      96% { opacity:0; }
-    }
-
-    .hub-divider {
-      width: 60px; height: 1px;
-      background: linear-gradient(90deg, transparent, #ff6400, transparent);
-      margin: 0 auto 12px;
-    }
-
-    .hub-sub {
-      font-family: 'Share Tech Mono', monospace;
-      font-size: 10px;
-      color: #2e2e2e;
-      letter-spacing: 0.18em;
-    }
-
-    /* ── GRID — desktop 2 col ── */
-    .tool-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 14px;
-      position: relative;
-      z-index: 2;
-    }
-
-    .tool-card {
-      background: rgba(255,255,255,0.025);
-      border: 1px solid rgba(255,255,255,0.07);
-      border-radius: 14px;
-      padding: 1.5rem 1.3rem 1.3rem;
-      text-decoration: none;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      position: relative;
-      overflow: hidden;
-      transition: border-color 0.25s, background 0.25s, transform 0.15s;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    .tool-card::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 10%; right: 10%;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, var(--accent), transparent);
-      opacity: 0;
-      transition: opacity 0.25s;
-    }
-
-    .tool-card::after {
-      content: '';
-      position: absolute;
-      top: -30px; right: -30px;
-      width: 90px; height: 90px;
-      background: radial-gradient(circle, var(--accent), transparent 70%);
-      opacity: 0;
-      transition: opacity 0.3s;
-      border-radius: 50%;
-    }
-
-    @media (hover: hover) {
-      .tool-card:hover {
-        background: rgba(255,255,255,0.045);
-        border-color: rgba(255,255,255,0.14);
-        transform: translateY(-3px);
-      }
-      .tool-card:hover::before { opacity: 1; }
-      .tool-card:hover::after  { opacity: 0.12; }
-      .tool-card:hover .tool-name { color: var(--accent); }
-      .tool-card:hover .tool-cta { opacity: 1; }
-      .tool-card:hover .cta-arrow { transform: translateX(4px); }
-    }
-
-    .tool-card:active {
-      background: rgba(255,255,255,0.05);
-      border-color: var(--accent);
-      transform: scale(0.98);
-      transition: transform 0.08s;
-    }
-
-    /* card inner layout — stacked on desktop, row on mobile */
-    .card-top {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-
-    .tool-icon { font-size: 24px; line-height: 1; }
-
-    .tool-tag {
-      font-family: 'Share Tech Mono', monospace;
-      font-size: 10px;
-      letter-spacing: 0.18em;
-      color: var(--accent);
-      text-transform: uppercase;
-      opacity: 0.75;
-    }
-
-    .tool-name {
-      font-weight: 800;
-      font-size: 16px;
-      color: #fff;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      line-height: 1.1;
-      transition: color 0.2s;
-    }
-
-    .tool-desc {
-      font-size: 13px;
-      font-weight: 400;
-      color: rgba(255,255,255,0.32);
-      line-height: 1.65;
-      flex: 1;
-    }
-
-    .tool-cta {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-family: 'Share Tech Mono', monospace;
-      font-size: 10px;
-      color: var(--accent);
-      letter-spacing: 0.12em;
-      opacity: 0.5;
-      transition: opacity 0.2s;
-      margin-top: 2px;
-    }
-
-    .cta-arrow { display: inline-block; transition: transform 0.2s; }
-
-    .card-body {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
-      min-width: 0;
-    }
-
-    /* ── FOOTER ── */
-    .hub-footer {
-      text-align: center;
-      margin-top: 1.8rem;
-      position: relative;
-      z-index: 2;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 4px;
-    }
-
-    .footer-by {
-      font-family: 'Share Tech Mono', monospace;
-      font-size: 9px;
-      color: #1e1e1e;
-      letter-spacing: 0.2em;
-    }
-
-    .footer-link {
-      font-family: 'Share Tech Mono', monospace;
-      font-size: 11px;
-      color: #ff6400;
-      text-decoration: none;
-      letter-spacing: 0.15em;
-      opacity: 0.4;
-      transition: opacity 0.2s;
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      padding: 8px 0;
-      min-height: 44px;
-    }
-
-    .footer-link:hover { opacity: 1; }
-    .x-icon { width: 11px; height: 11px; fill: #ff6400; }
-
-    /* ── BREAKPOINTS ── */
-
-    /* Tablet */
-    @media (max-width: 620px) {
-      body { padding: 1rem 0.8rem; align-items: flex-start; }
-
-      .hub-root {
-        padding: 2rem 1.2rem 1.8rem;
-        border-radius: 14px;
-      }
-    }
-
-    /* Mobile — single column, horizontal card layout */
-    @media (max-width: 480px) {
-      body { padding: 0.8rem 0.6rem; }
-
-      .hub-root {
-        padding: 1.6rem 1rem 1.5rem;
-        border-radius: 12px;
-      }
-
-      .btc-mark { width: 42px; height: 42px; margin-bottom: 14px; }
-
-      .hub-header { margin-bottom: 1.6rem; }
-
-      .hub-eyebrow { font-size: 9px; letter-spacing: 0.2em; }
-
-      .hub-sub { font-size: 9px; letter-spacing: 0.12em; }
-
-      /* Single column */
-      .tool-grid {
-        grid-template-columns: 1fr;
-        gap: 8px;
-      }
-
-      /* Horizontal row layout inside each card */
-      .tool-card {
-        flex-direction: row;
-        align-items: flex-start;
-        padding: 1rem;
-        gap: 12px;
-        border-radius: 12px;
-      }
-
-      .card-top {
-        flex-direction: row;
-        align-items: center;
-        gap: 8px;
-        flex-shrink: 0;
-        padding-top: 1px;
-      }
-
-      .tool-icon { font-size: 20px; }
-
-      .tool-tag {
-        writing-mode: vertical-lr;
-        text-orientation: mixed;
-        transform: rotate(180deg);
-        font-size: 7px;
-        letter-spacing: 0.15em;
-        height: 60px;
-        display: flex;
-        align-items: center;
-      }
-
-      /* Right content block */
-      .card-body {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        gap: 5px;
-        min-width: 0;
-      }
-
-      .tool-name { font-size: 15px; }
-
-      .tool-desc { font-size: 12px; line-height: 1.55; color: rgba(255,255,255,0.35); }
-
-      .tool-cta { font-size: 10px; opacity: 0.6; }
-    }
-
-    /* Very small phones */
-    @media (max-width: 360px) {
-      .hub-root { padding: 1.4rem 0.9rem 1.3rem; }
-      .tool-card { padding: 0.9rem; }
-    }
-  </style>
-</head>
-<body>
-
-  <div class="hub-root">
-    <div class="glow-top"></div>
-    <div class="glow-bottom"></div>
-
-    <div class="hub-header">
-      <svg class="btc-mark" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
-        <rect x="4" y="4" width="56" height="56" rx="14" fill="#ff6400"/>
-        <text x="32" y="44" text-anchor="middle" font-family="'Montserrat', Arial Black, sans-serif" font-size="36" font-weight="800" fill="#fff">₿</text>
-      </svg>
-
-      <div class="hub-eyebrow">// bitcoin toolkit</div>
-
-      <div class="title-wrap">
-        <div class="hub-title" data-text="PLEB COMMAND CENTER">
-          PLEB <span class="hi">COMMAND</span> CENTER
+  <section id="reading">
+    <div class="hero">
+      <div class="panel gaugebox">
+        <div class="label"><span class="easy" style="display:inline">Today's vibe</span><span class="nerd">Today's bull score · 0 to 100</span></div>
+        <svg id="gauge" viewBox="0 0 320 196" role="img" aria-label="Bull score gauge"></svg>
+        <div class="verdict" id="verdict">—</div>
+        <div class="scale nerd" id="scale">
+          <div data-b="0">0–29<br>Risk-off</div><div data-b="30">30–44<br>Cautious</div><div data-b="45">45–59<br>Neutral</div><div data-b="60">60–74<br>Bullish</div><div data-b="75">75+<br>Full send</div>
+        </div>
+        <div class="adopt nerd">
+          <div class="row"><span class="label">Long-run adoption trend</span><b id="adoptV">—</b></div>
+          <div class="track"><span id="adoptBar" style="width:50%"></span></div>
+          <p id="adoptTxt">—</p>
         </div>
       </div>
-
-      <div class="hub-divider"></div>
-      <div class="hub-sub">all tools &nbsp;·&nbsp; one place &nbsp;·&nbsp; no KYC</div>
+      <div class="panel readout">
+        <p class="since" id="since" hidden></p>
+        <p class="plain" id="plain">—</p>
+        <div>
+          <div class="hook easy" style="margin-bottom:6px">Bitcoin hits $1,000,000 in…</div>
+          <div class="label nerd">Most likely month Bitcoin first trades at $1,000,000</div>
+          <div class="bigdate"><div class="v" id="medDate">—</div><div class="s" id="medSub">—</div></div>
+        </div>
+        <div class="kpis">
+          <div class="kpi"><span class="label">BTC now</span><span class="n mono" id="kPrice">—</span><span class="d" id="kPriceD">—</span></div>
+          <div class="kpi"><span class="label">Fair price today</span><span class="n mono" id="kMeter">—</span><span class="d" id="kMeterD">—</span></div>
+          <div class="kpi"><span class="label">A year from now</span><span class="n mono" id="k12">—</span><span class="d" id="k12D">—</span></div>
+          <div class="kpi nerd"><span class="label">$1M range</span><span class="n mono" id="kRange">—</span><span class="d">fastest 1 in 10 futures to slowest 1 in 10</span></div>
+        </div>
+        <div class="bigodds easy"><div><b id="e30">—</b><span>chance by 2030</span></div><div><b id="e35">—</b><span>chance by 2035</span></div><div><b id="e40">—</b><span>chance by 2040</span></div></div>
+        <div class="nerd">
+          <div class="label" style="margin-bottom:8px">Chance (%) Bitcoin has hit $1M by the end of each year</div>
+          <div class="odds" id="odds"></div>
+        </div>
+      </div>
     </div>
+  </section>
 
-    <div class="tool-grid">
-
-      <a class="tool-card" href="https://stackfreedom.io" target="_blank" rel="noopener" style="--accent:#ffaa00;">
-              <div class="card-top">
-                <div class="tool-icon">🛡️</div>
-                <div class="tool-tag">// freedom</div>
-              </div>
-              <div class="card-body">
-                <div class="tool-name">StackFreedom</div>
-                <div class="tool-desc">Personal Bitcoin stacking roadmap with sovereignty milestones and your Freedom Target Year.</div>
-                <div class="tool-cta">launch tool <span class="cta-arrow">→</span></div>
-              </div>
-            </a>
-
-      <a class="tool-card" href="https://satchek.com" target="_blank" rel="noopener" style="--accent:#f0c040;">
-              <div class="card-top">
-                <div class="tool-icon">🔮</div>
-                <div class="tool-tag">// future val</div>
-              </div>
-              <div class="card-body">
-                <div class="tool-name">SatChek</div>
-                <div class="tool-desc">See how much today's expenses will be worth in Bitcoin terms in the future. Time preference made real.</div>
-                <div class="tool-cta">launch tool <span class="cta-arrow">→</span></div>
-              </div>
-            </a>
-
-      <a class="tool-card" href="https://btcloancalculator.vercel.app" target="_blank" rel="noopener" style="--accent:#ff2200;">
-              <div class="card-top">
-                <div class="tool-icon">🏦</div>
-                <div class="tool-tag">// loan calculator</div>
-              </div>
-              <div class="card-body">
-                <div class="tool-name">BTC Loan Calc</div>
-                <div class="tool-desc">Sell or borrow against your Bitcoin? Live liquidation risk, tax impact, side-by-side comparison.</div>
-                <div class="tool-cta">launch tool <span class="cta-arrow">→</span></div>
-              </div>
-            </a>
-
-      <a class="tool-card" href="https://staysovereign.vercel.app" target="_blank" rel="noopener" style="--accent:#a78bfa;">
-              <div class="card-top">
-                <div class="tool-icon">🔐</div>
-                <div class="tool-tag">// self-custody</div>
-              </div>
-              <div class="card-body">
-                <div class="tool-name">Sovereign Scorecard</div>
-                <div class="tool-desc">12-question Bitcoin self-custody quiz. Get a Sovereignty Score 0–100, personalized security recommendations, and a grade. Every pleb should take this.</div>
-                <div class="tool-cta">launch tool <span class="cta-arrow">→</span></div>
-              </div>
-            </a>
-
-      <a class="tool-card" href="https://satconvert.vercel.app" target="_blank" rel="noopener" style="--accent:#00d4aa;">
-              <div class="card-top">
-                <div class="tool-icon">⚡</div>
-                <div class="tool-tag">// converter</div>
-              </div>
-              <div class="card-body">
-                <div class="tool-name">SatConvert</div>
-                <div class="tool-desc">Instantly convert between sats, BTC, and fiat. Think in sats, live in sats.</div>
-                <div class="tool-cta">launch tool <span class="cta-arrow">→</span></div>
-              </div>
-            </a>
-
-      <a class="tool-card" href="https://satoshimachine.vercel.app" target="_blank" rel="noopener" style="--accent:#ff4500;">
-              <div class="card-top">
-                <div class="tool-icon">🕰️</div>
-                <div class="tool-tag">// red pill</div>
-              </div>
-              <div class="card-body">
-                <div class="tool-name">Satoshi Machine</div>
-                <div class="tool-desc">Type any item, pick a year — see what it cost then, what inflation did to it, and what Bitcoin would have returned instead.</div>
-                <div class="tool-cta">launch tool <span class="cta-arrow">→</span></div>
-              </div>
-            </a>
-
-      
-
-      <a class="tool-card" href="https://halvening.vercel.app" target="_blank" rel="noopener" style="--accent:#ff8c00;">
-              <div class="card-top">
-                <div class="tool-icon">⚡</div>
-                <div class="tool-tag">// halving clock</div>
-              </div>
-              <div class="card-body">
-                <div class="tool-name">Halvening</div>
-                <div class="tool-desc">Live countdown to the next Bitcoin halving. BTC price, cycle progress, all 5 halving cards with historical returns. Supply is math.</div>
-                <div class="tool-cta">launch tool <span class="cta-arrow">→</span></div>
-              </div>
-            </a>
-
-      <a class="tool-card" href="https://stacksim.vercel.app" target="_blank" rel="noopener" style="--accent:#ff6400;">
-              <div class="card-top">
-                <div class="tool-icon">📦</div>
-                <div class="tool-tag">// supply sim</div>
-              </div>
-              <div class="card-body">
-                <div class="tool-name">StackSim</div>
-                <div class="tool-desc">Model how DCA stackers absorb available Bitcoin supply. See your stack vs the market.</div>
-                <div class="tool-cta">launch tool <span class="cta-arrow">→</span></div>
-              </div>
-            </a>
-
-
-      <a class="tool-card" href="https://1mbitcoin.vercel.app" target="_blank" rel="noopener" style="--accent:#f7931a;">
-              <div class="card-top">
-                <div class="tool-icon">🎯</div>
-                <div class="tool-tag">// road to $1M</div>
-              </div>
-              <div class="card-body">
-                <div class="tool-name">$1M BTC</div>
-                <div class="tool-desc">When does Bitcoin hit $1,000,000? A daily meter built on every cycle since 2013: today's vibe, the most likely $1M month, and the odds year by year.</div>
-                <div class="tool-cta">launch tool <span class="cta-arrow">→</span></div>
-              </div>
-            </a>
-
+  <section id="needle" class="nerd">
+    <div class="sec-h"><div><div class="kicker">The two scores</div><h2>What moved it</h2></div><p>Every input starts at a neutral 50. Bars to the right push up, bars to the left pull down. The two scores steer different things, so they're kept apart.</p></div>
+    <div class="needles">
+      <div class="panel needle"><div><h3>Bull score <span class="mono" id="sTot" style="color:var(--orange)"></span></h3><p class="lead">Today's conditions. Moves the next 12 to 18 months, then fades. It barely changes the $1M date.</p></div><div class="contrib" id="contrib"></div><div class="ctot" id="ctot"></div></div>
+      <div class="panel needle"><div><h3>Adoption trend <span class="mono" id="aTot" style="color:var(--teal)"></span></h3><p class="lead">Who keeps accumulating, year over year. Speeds up or slows the long-run trend line for decades, so it moves the $1M date most.</p></div><div class="contrib" id="contribA"></div><div class="ctot" id="ctotA"></div></div>
     </div>
+  </section>
 
-    <div class="hub-footer">
-      <span class="footer-by">created by</span>
-      <a class="footer-link" href="https://x.com/aastack" target="_blank" rel="noopener">
-        <svg class="x-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-          <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.748l7.73-8.835L1.254 2.25H8.08l4.253 5.622 5.912-5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
-        </svg>
-        @aastack
-      </a>
+  <section id="lab">
+    <div class="sec-h"><div><div class="kicker">Play with it</div><h2>What if…?</h2></div><p>Tap a headline and watch the $1M date move. Stack a few. Tap again to undo.</p></div>
+    <div class="lab">
+      <div class="scen" id="scen"></div>
+      <div class="panel labout">
+        <div class="label">Effect on the $1M date</div>
+        <div class="delta" id="labDelta">Pick one</div>
+        <p id="labText" style="color:var(--muted);font-size:13.5px">—</p>
+        <div class="compare">
+          <div><div class="label">Real data</div><div class="n" id="labBase">—</div></div>
+          <div><div class="label">With scenario</div><div class="n" id="labNew">—</div></div>
+        </div>
+      </div>
     </div>
+  </section>
 
-  
+  <section id="road">
+    <div class="sec-h"><div><div class="kicker">Milestones</div><h2>The road to $1M</h2></div><p>Where we are, and the most likely month we reach each stop.</p></div>
+    <div class="panel boxpad"><div class="scrollx" id="roadsvg"></div><div class="legend nerd" id="halvingLine"></div></div>
+  </section>
 
+  <section id="record">
+    <div class="sec-h"><div><div class="kicker">Does it work?</div><h2>Track record</h2></div><p>We ran the meter at the end of every month from mid-2015 to 2025, using only what was known at that moment, then checked the real price a year later. The 2015–2019 years were never used to tune it, so they're the honest test.</p></div>
+    <div class="panel boxpad">
+      <div class="rec-tiles" id="recTiles"></div>
+      <div class="scrollx" id="recchart"></div>
+      <div class="scrollx nerd"><table class="bt" id="recEras"></table></div>
+      <div class="legend"><span><i style="background:var(--orange);opacity:.4"></i>The meter's range a year ahead</span><span><i style="background:var(--good)"></i>Real price landed inside</span><span><i style="background:var(--bad)"></i>Landed outside</span><span><i style="background:var(--fg);opacity:.55"></i>Bitcoin price</span></div>
+    </div>
+  </section>
+
+  <section id="decides">
+    <div class="sec-h"><div><div class="kicker">The big levers</div><h2>What decides the date</h2></div><p>Ranked by how much each one moves the $1M date, measured by rerunning the model.</p></div>
+    <div class="panel boxpad"><div class="decide" id="decide"><p style="color:var(--muted)">Measuring…</p></div></div>
+  </section>
+
+
+
+  <section id="drivers" class="nerd">
+    <div class="sec-h"><div><div class="kicker">Honesty panel</div><h2>What drives the date</h2></div><p>Each row reruns the model with one assumption changed. Long bars mean the date depends heavily on that choice. Assumptions sit at the top for a reason: they matter more than any day's news.</p></div>
+    <div class="panel boxpad"><div class="drv" id="drv"><p class="lead" style="color:var(--muted)">Running the comparisons…</p></div></div>
+  </section>
+
+  <section id="check" class="nerd">
+    <div class="sec-h"><div><div class="kicker">Does it fit?</div><h2>Model check</h2></div><p>The trend lines are fitted to the midpoints between each cycle's top and bottom. The backtest asks: using only earlier cycles, how close would each method have come?</p></div>
+    <div class="checkgrid">
+      <div class="panel boxpad"><div class="scrollx" id="histchart"></div><div class="legend"><span><i style="background:var(--orange)"></i>Cycle tops</span><span><i style="background:var(--teal)"></i>Cycle bottoms</span><span><i style="background:var(--fg)"></i>Midpoints the lines are fitted to</span></div></div>
+      <div class="panel boxpad">
+        <div class="scrollx"><table class="bt" id="btTable"></table></div>
+        <div class="callout" id="btNote">—</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="inputs" class="nerd">
+    <div class="sec-h"><div><div class="kicker">Update daily</div><h2>The inputs</h2></div><p>Every number shows where it comes from and how it's graded. Change any of them and the whole page updates.</p></div>
+    <div class="actions"><button class="btn ghost" type="button" id="resetBtn">Undo my edits (back to latest data)</button></div>
+    <div class="grouph"><h3>Daily · bull score</h3><p>Fast-moving readings. Affect the next year or so.</p></div>
+    <div class="board" id="boardS"></div>
+    <div class="grouph"><h3>Long-run · adoption trend</h3><p>Slow-moving readings. Bend the trend line for decades.</p></div>
+    <div class="board" id="boardA"></div>
+    <div class="grouph"><h3>Model assumptions</h3><p>The big levers. See "What drives the date" for how much each one matters.</p></div>
+    <div class="board" id="boardM"></div>
+  </section>
+
+  <section class="two nerd">
+    <div class="panel box">
+      <div class="sec-h" style="margin:0"><h2>Headline log</h2><p>Rate each headline −3 to +3. The last 7 days count toward the bull score.</p></div>
+      <form class="addnews" id="newsForm">
+        <input id="newsText" type="text" placeholder="e.g. Texas adds to its Bitcoin reserve" aria-label="Headline">
+        <select id="newsImp" aria-label="Impact"><option value="3">+3</option><option value="2">+2</option><option value="1" selected>+1</option><option value="0">0</option><option value="-1">−1</option><option value="-2">−2</option><option value="-3">−3</option></select>
+        <button class="btn" type="submit">Add</button>
+      </form>
+      <ul class="news" id="newsList"></ul>
+    </div>
+    <div class="panel box">
+      <div class="sec-h" style="margin:0"><h2>Meter history</h2><p>Your saved daily readings.</p></div>
+      <div id="hist"></div>
+    </div>
+  </section>
+
+  <section id="how" class="nerd">
+    <div class="sec-h"><div><div class="kicker">The manual</div><h2>How the $1M date is made</h2></div><p>Five steps, filled in with today's numbers. Every figure on this page comes out of these steps.</p></div>
+    <div class="steps" id="steps"></div>
+    <div class="panel boxpad" style="margin-top:14px">
+      <div class="gloss">
+        <div><b>Bull score</b>A 0–100 grade of today's conditions. 50 means nothing is pushing either way. It shapes the next year, then fades.</div>
+        <div><b>Adoption trend</b>A 0–100 grade of who is accumulating year over year: ETFs, companies, miners. It changes how fast the trend line rises for decades.</div>
+        <div><b>Trend line (fair value)</b>Where Bitcoin "should" trade ignoring the cycle. Fitted to the midpoint of every cycle since 2013.</div>
+        <div><b>Meter price</b>The trend line plus where we are in the 4-year cycle plus today's bull score. What the model thinks BTC should trade at right now.</div>
+        <div><b>Most likely month</b>The median. Half of the 2,000 futures reach $1M by then, half later.</div>
+        <div><b>Surprise shocks</b>Rare, lasting jumps in either direction: a nation starts buying (+20%), or a major crackdown or failure (−25%).</div>
+        <div><b>Fat tails</b>Bitcoin has more extreme months than a bell curve predicts. The random moves are drawn to allow that.</div>
+        <div><b>Is this a prediction?</b>No. It shows what the inputs and assumptions imply, and the honesty panel shows how much those assumptions matter.</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="nerdcta easy"><div class="hook">Want the math?</div><p>Turn on Nerd mode for every input and its source, what moved the score, how much each assumption matters, and how the model did on past cycles.</p><button class="btn" type="button" id="modeBtn2">Turn on Nerd mode</button></div>
+  <p class="foot">For education and fun, not financial advice. Cycle prices are rounded exchange highs and lows; the June 2026 low is provisional. Built for the plebs · <a href="https://plebcc.com">More free tools at plebcc.com</a></p>
+</div>
+
+<div class="overlay" id="shareOv" hidden>
+  <div class="sharebox" role="dialog" aria-modal="true" aria-labelledby="shareH">
+    <div class="sec-h" style="margin:0"><h2 id="shareH">Today's X post</h2><button class="btn ghost" type="button" id="shareClose">Close</button></div>
+    <div class="seg" id="postSeg" role="group" aria-label="Post length" style="max-width:340px"><button type="button" data-v="long">Full breakdown</button><button type="button" data-v="short">Short (fits 280)</button></div>
+    <textarea id="postText" rows="14" aria-label="Post text" spellcheck="true"></textarea>
+    <div class="actions"><button class="btn" type="button" id="postCopy">Copy post</button><span class="note" id="postCount">—</span></div>
+    <div id="postCheck" class="postcheck"></div>
+    <div class="label">Image to attach</div>
+    <img id="shareImg" alt="$1M BTC reading for today">
+    <div class="actions"><button class="btn" type="button" id="shareSave">Save image</button><span class="note" id="shareNote">1200 × 675, sized for X. You can also right-click or long-press the image to save it.</span></div>
   </div>
+</div>
 
-</body>
-</html>
+<script id="model">
+/* ---------- Million Meter v3 core model (pure) ---------- */
+const DAY=864e5, GENESIS=Date.UTC(2009,0,3), MONTH_D=30.4375, YEAR_D=365.25;
+const MILESTONES=[100e3,126200,150e3,250e3,500e3,1e6];
+const MINED_PER_MONTH=3.125*144*MONTH_D;
+// Tuned against the 2019–2025 walk-forward backtest (see Model check)
+const P={sig0:0.65,sigMin:0.30,kappa:0.6,rw:0.10,slowMult:0.75,kSd:0.12,blend:{slowing:.55,recent:.35,full:.10}};
+// Cycle tops and bottoms since 2011 (intraday USD). The 2026 low is provisional until price confirms it.
+const PIVOTS=[
+  {date:"2011-06-08",p:31.91,type:"top"},{date:"2011-11-18",p:2.01,type:"bottom"},
+  {date:"2013-12-04",p:1150,type:"top"},{date:"2015-01-14",p:152,type:"bottom"},
+  {date:"2017-12-17",p:19800,type:"top"},{date:"2018-12-15",p:3200,type:"bottom"},
+  {date:"2021-11-10",p:69000,type:"top"},{date:"2022-11-21",p:15500,type:"bottom"},
+  {date:"2025-10-06",p:126200,type:"top"},{date:"2026-06-30",p:57717,type:"bottom",prov:true}
+].map(x=>Object.assign(x,{t:Date.parse(x.date+"T00:00:00Z")}));
+const daysSince=t=>(t-GENESIS)/DAY;
+const L10=Math.log10;
+function lsq(pts){const n=pts.length,mx=pts.reduce((s,q)=>s+q[0],0)/n,my=pts.reduce((s,q)=>s+q[1],0)/n;let sxy=0,sxx=0;pts.forEach(([x,y])=>{sxy+=(x-mx)*(y-my);sxx+=(x-mx)**2});const k=sxy/sxx;return {k,a:my-k*mx}}
+// Build the trend lines and cycle shape from a list of known pivots (oldest first, alternating top/bottom).
+function calibrate(piv){
+  const mids=[];for(let i=0;i+1<piv.length;i++)if(piv[i].type==="top"&&piv[i+1].type==="bottom"){const a=piv[i],b=piv[i+1];mids.push({t:(a.t+b.t)/2,d:(daysSince(a.t)+daysSince(b.t))/2,p:Math.sqrt(a.p*b.p),top:a,bottom:b})}
+  const segK=(i,j)=>(L10(mids[j].p)-L10(mids[i].p))/(L10(mids[j].d)-L10(mids[i].d));
+  const slopes=[];for(let i=0;i+1<mids.length;i++)slopes.push(segK(i,i+1));
+  const lm=mids[mids.length-1],rk=slopes[slopes.length-1],fit=lsq(mids.map(q=>[L10(q.d),L10(q.p)]));
+  const views={
+    slowing:{name:"Slowing",k:rk*P.slowMult,a:L10(lm.p)-rk*P.slowMult*L10(lm.d)},
+    recent:{name:"Recent cycles",k:rk,a:L10(lm.p)-rk*L10(lm.d)},
+    full:{name:"Full history",k:fit.k,a:fit.a}};
+  const lastTop=piv.filter(x=>x.type==="top").pop();
+  return {mids,slopes,views,peakT:lastTop.t,troughFrac:(lm.bottom.t-lm.top.t)/(4*YEAR_D*DAY),amp0:Math.log(lm.top.p/lm.p)};
+}
+const CAL=calibrate(PIVOTS);
+const MIDS=CAL.mids, SLOPES=CAL.slopes, VIEWS=CAL.views, AMP0=CAL.amp0, TROUGH_FRAC=CAL.troughFrac;
+const VIEW_KEYS=["slowing","recent","full"];
+const BLEND=P.blend;
+const lnFair=(v,t,cal)=>Math.LN10*((cal||CAL).views[v].a+(cal||CAL).views[v].k*L10(daysSince(t)));
+// down-leg eases from the top; the up-leg leaves the bottom fast, as recoveries have, then flattens into the next top
+function cycleShape(t,cal){cal=cal||CAL;const ph=(((t-cal.peakT)/DAY/YEAR_D)%4+4)%4/4,tf=cal.troughFrac;return ph<tf?Math.cos(Math.PI*ph/tf):-Math.cos(Math.PI*Math.pow((ph-tf)/(1-tf),0.6))}
+const cycleOffset=(t,yrs,str,cal)=>str*(cal||CAL).amp0*Math.exp(-Math.max(0,yrs)/8)*cycleShape(t,cal);
+
+const clampV=(v,a,b)=>Math.max(a,Math.min(b,v));
+const SHORT_W={val:.15,mom:.10,sent:.10,etf:.15,corp:.15,hash:.10,macro:.15,news:.10};
+const LONG_W={etfY:.35,corpY:.45,hashY:.20};
+const FED={cut:75,hold:50,holdhike:38,hike:22};
+function viewWeights(s){return s.view==="blend"?P.blend:{[s.view]:1}}
+function blendedLnFair(s,t){const w=viewWeights(s);let x=0;for(const v in w)x+=w[v]*lnFair(v,t,s.cal);return x}
+function minedYTD(t){const y=new Date(t).getUTCFullYear();return 3.125*144*(t-Date.UTC(y,0,1))/DAY}
+
+function scores(s){
+  const fair=Math.exp(blendedLnFair(s,s.now)), r=s.price/fair;
+  const sc={
+    val:clampV(50-100*L10(r),0,100),
+    mom:clampV(50+1.6*s.chg30,0,100),
+    sent:clampV(100-s.fng,0,100),
+    etf:50+50*Math.tanh(s.etf30/2500),
+    corp:30+70*(1-Math.exp(-Math.max(0,s.corp30)/MINED_PER_MONTH)),
+    hash:50+50*Math.tanh(s.hash30/15),
+    macro:0.6*(FED[s.fed]??50)+0.4*(50+50*Math.tanh((s.m2-4)/4)),
+    news:clampV(50+7*s.newsSum,0,100)
+  };
+  const lc={
+    etfY:50+50*Math.tanh(s.etfYTD/15),
+    corpY:30+70*(1-Math.exp(-Math.max(0,s.corpYTD)/Math.max(1,minedYTD(s.now)))),
+    hashY:50+50*Math.tanh(s.hashYoY/30)
+  };
+  let S=0;for(const k in SHORT_W)S+=SHORT_W[k]*sc[k];
+  let A=0;for(const k in LONG_W)A+=LONG_W[k]*lc[k];
+  if(s.forceS!=null)S=s.forceS; if(s.forceA!=null)A=s.forceA;
+  return {sc,lc,S,A,fair,ratio:r};
+}
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+
+function simulate(s,f,opt){
+  opt=opt||{};
+  const N=opt.N||2000, M=opt.M||264, dt=1/12, kappa=P.kappa, sqdt=Math.sqrt(dt), keep=opt.keep||0;
+  const rnd=mulberry32(opt.seed??21000000);
+  const gauss=()=>{let u=0;while(u===0)u=rnd();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*rnd())};
+  const fat=()=>{const z=gauss();let c=0;for(let i=0;i<4;i++){const g=gauss();c+=g*g}return z/Math.sqrt(c/4)/Math.SQRT2}; // Student-t, 4 dof, unit variance
+  const kAdj=0.5*(f.A-50)/50, tilt=0.25*(f.S-50)/50, str=s.cycle/100;
+  const pUp=s.upOdds/100/12, pDn=s.dnOdds/100/12, jUp=Math.log(1.2), jDn=Math.log(0.75);
+  const cal=s.cal||CAL;
+  const t0=s.now, d0=daysSince(t0), w=viewWeights(s), vk=Object.keys(w), cum=[];let acc=0;vk.forEach(v=>{acc+=w[v];cum.push(acc)});
+  const traces=[];
+  const prices=new Float32Array(N*M), Q=MILESTONES.length, first=new Int16Array(N*Q).fill(-1);
+  for(let i=0;i<N;i++){
+    const u=rnd()*acc;let vi=0;while(u>cum[vi])vi++;const v=vk[vi];
+    const k=cal.views[v].k+kAdj+P.kSd*gauss();
+    const tr=opt.trace?{view:v,k,ev:[],luck:0,luck2:0,n2:0,first:-1}:null;
+    let lnF=lnFair(v,t0,cal)+(s.shockNow?jUp:0)+(s.shockDownNow?jDn:0), lnP=Math.log(s.price);
+    for(let q=0;q<Q;q++) if(s.price>=MILESTONES[q]) first[i*Q+q]=0;
+    for(let j=1;j<=M;j++){
+      const d=d0+j*MONTH_D, yrs=j/12, t=t0+j*MONTH_D*DAY, g=k*Math.log(d/(d-MONTH_D));
+      lnF+=g+P.rw*sqdt*gauss(); if(rnd()<pUp){lnF+=jUp;if(tr)tr.ev.push({j,up:1})} if(rnd()<pDn){lnF+=jDn;if(tr)tr.ev.push({j,up:0})}
+      const target=lnF+cycleOffset(t,yrs,str,cal)+tilt*Math.exp(-yrs);
+      const sig=Math.max(P.sigMin,P.sig0-0.015*yrs);
+      const zz=fat();lnP+=g+kappa*(target-lnP)*dt+sig*sqdt*zz;if(tr&&first[i*Q+5]<0){if(j<=60)tr.luck+=zz;else{tr.luck2+=zz;tr.n2++}}
+      const px=Math.exp(lnP); prices[i*M+j-1]=px;
+      for(let q=0;q<Q;q++){const idx=i*Q+q;if(first[idx]<0&&px>=MILESTONES[q])first[idx]=j}
+    }
+    if(tr){tr.first=first[i*Q+5];traces.push(tr)}
+  }
+  const pct=[0.1,0.25,0.5,0.75,0.9], bands=opt.noBands?null:pct.map(()=>new Float64Array(M)), col=new Float64Array(N);
+  if(bands) for(let j=0;j<M;j++){for(let i=0;i<N;i++)col[i]=prices[i*M+j];col.sort();pct.forEach((p,kk)=>bands[kk][j]=col[Math.floor(p*(N-1))])}
+  const fp=MILESTONES.map((_,q)=>{const a=[];for(let i=0;i<N;i++){const x=first[i*Q+q];a.push(x<0?Infinity:x)}a.sort((x,y)=>x-y);return a});
+  const fpQuant=(q,p)=>fp[q][Math.floor(p*(N-1))];
+  const probBy=(q,mo)=>{let c=0;for(const x of fp[q])if(x<=mo)c++;return c/N};
+  const fairPath=new Float64Array(M);for(let j=1;j<=M;j++){const t=t0+j*MONTH_D*DAY,d=daysSince(t);let x=0;for(const v in w)x+=w[v]*(lnFair(v,t,cal)+kAdj*Math.log(d/d0));fairPath[j-1]=Math.exp(x+(s.shockNow?jUp:0)+(s.shockDownNow?jDn:0))}
+  const paths=[];for(let i=0;i<Math.min(keep,N);i++)paths.push(prices.slice(i*M,(i+1)*M));
+  const lnF0=blendedLnFair(s,t0)+(s.shockNow?jUp:0)+(s.shockDownNow?jDn:0);
+  let kBl=0;for(const v in w)kBl+=w[v]*(cal.views[v].k+kAdj);
+  return {N,M,bands,fpQuant,probBy,fairPath,paths,traces,t0,kAdj,kBlend:kBl,
+    fairToday:Math.exp(lnF0), meterToday:Math.exp(lnF0+cycleOffset(t0,0,str,cal)+tilt), cycleNow:cycleShape(t0,cal),
+    fairGrowth1y:Math.exp(kBl*Math.log((d0+YEAR_D)/d0))-1};
+}
+// Backtest: predict a cycle midline using only the cycles before it
+function backtest(){
+  const out=[],n=MIDS.length;
+  const pred=(fromIdx,k,target)=>MIDS[fromIdx].p*Math.pow(MIDS[target].d/MIDS[fromIdx].d,k);
+  const fitUpTo=t=>{const f=lsq(MIDS.slice(0,t).map(q=>[L10(q.d),L10(q.p)]));return {k:f.k,p:Math.pow(10,f.a+f.k*L10(MIDS[t].d))}};
+  const yr=i=>new Date(MIDS[i].top.t).getUTCFullYear()+"–"+String(new Date(MIDS[i].bottom.t).getUTCFullYear()).slice(2);
+  for(let t=n-1;t>=2;t--){
+    const f=fitUpTo(t),rows=[
+      {method:"Latest slope (Recent method)",k:SLOPES[t-2],pred:pred(t-1,SLOPES[t-2],t)},
+      {method:"Latest slope × "+P.slowMult+" (Slowing method)",k:SLOPES[t-2]*P.slowMult,pred:pred(t-1,SLOPES[t-2]*P.slowMult,t)}];
+    if(t>=3)rows.push({method:"Fit through all earlier cycles (Full method)",k:f.k,pred:f.p});
+    out.push({target:yr(t)+" midline",actual:MIDS[t].p,rows});
+  }
+  return out;
+}
+if(typeof module!=="undefined")module.exports={P,calibrate,CAL,scores,simulate,backtest,VIEWS,MIDS,SLOPES,PIVOTS,AMP0,TROUGH_FRAC,cycleShape,lnFair,blendedLnFair,MILESTONES,daysSince,DAY};
+
+</script>
+
+<script>
+(function(){
+const $=id=>document.getElementById(id);
+const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+/* ---------- data: embedded snapshot, then daily data, then live feeds ---------- */
+const SNAPSHOT={"asOf": "2026-11-18T13:50:00Z", "inputs": {"chg30": -22.2, "corp30": -6653, "corpYTD": 206654, "etf30": -2477, "etfYTD": -2.21, "fed": "holdhike", "fng": 11, "hash30": -4.1, "hashYoY": -13, "m2": 5.7, "price": 64073}, "notes": {"corp": "−6,653 BTC net disclosed Oct 19–Nov 18. Bought 9,092: Strive 6,586: 6,182 (Oct 17–23, ends in window), 124 (Oct 24–30), 29 (announced Nov 9), 251 (week of Nov 9–15; holdings 43,404). Strategy 2,332: 811 (Oct 26–Nov 1), 1,036 (Nov 2–8), 485 (Nov 9–15, 8-K Nov 16; holdings 850,849). Twenty One Capital 154 (disclosed Nov 16, ~$10M at ~$64,801; holdings ~43,668; Bitcoin Magazine Nov 17, also BitcoinTreasuries.net). Super League 8. Capital B 12. Dropped: Strategy 267 (Oct 12–18, now out of window). Sold 15,745: MARA 13,597 'after September' (CoinDesk Nov 10, restated Nov 18 — same sale, not new; exact dates not disclosed, subtracted in full) and Hut 8 about 2,148 in October. Range: up to +9,092 if those sales fell before Oct 19; the lower is used. No Metaplanet purchases found in the window. Biggest buyer: Strive; biggest seller: MARA.", "corpY": "Businesses added 193,000 BTC in 2026 through Oct 5 (River via Hokanews; ChainCatcher via KuCoin, last opened Nov 6), plus 13,654 disclosed purchases since by Strive (2,822; 1,223; 6,182; 124; 29; 251), Strategy (250; 267; 811; 1,036; 485), Twenty One (154, Nov 16), Super League (8) and Capital B (12): 206,654 BTC. Purchases only; subtracting MARA's 13,597 BTC and Hut 8's ~2,148 BTC sales gives ~190,909.", "etf": "−$2,477M over Oct 19–Nov 18 (trading days Oct 19–Nov 17). TFTC October dailies Oct 19–30 sum to +$102.2M (Oct 19 +526.6, 20 +23.2, 21 +528.4, 22 −635.5, 23 −137.9, 26 +110.3, 27 +176.0, 28 +137.3, 29 +17.1, 30 −643.3); TFTC November dailies Nov 2–17 sum to −$2,579.1M (Nov 2 −398.6, 3 −115.6, 4 +74.6, 5 −430.2, 6 −411.9, 9 −201.1, 10 −95.0, 11 −299.9, 12 −284.0, 13 −185.5, 16 +8.0, 17 −239.9). Nov 17 −$239.9M confirmed by Farside via Bloomingbit (IBIT −$209.5M, GBTC −$17.7M, ARKB −$13.1M). Sources agree.", "etfY": "−$2.21B for 2026 through Nov 17: −$1.98B through Nov 13 (TFTC monthly totals plus November dailies; The Block Nov 14 also says ~−$1.98B) plus Nov 16 +$8.0M and Nov 17 −$239.9M (TFTC; Farside via Bloomingbit).", "hash": "−4.1% difficulty over Oct 19–Nov 18: 140.58T (in effect since Oct 16) to 134.82T now (+5.54% at block 973,728, −9.13% Nov 14 at block 975,744), per mempool.space API (checked Nov 18); matches CoinWarz −4.09% on Nov 17. 7-day average hashrate ~980 EH/s (mempool.space daily values Nov 11–17).", "hashY": "Not verified: −13% kept. Trackers disagree: 7-day average hashrate ~980 EH/s now (mempool.space, Nov 11–17) vs ~1,089 EH/s a year ago (mempool.space, checked Nov 15) = about −10%; earlier readings gave up to −18%; difficulty 134.82T now vs 152.27T mid-Nov 2025 = −11.5%. Range −10% to −18%.", "macro": "Fed held 3.75–4.00% on Oct 28 with two dissents for a hike, after a 0.25% hike on Sept 16; no decision since. October FOMC minutes due 2pm ET Nov 18 (not yet out at update time). Markets priced ~92% odds of a December hike (Wintermute via CryptoNews, Nov 17). Still \"holdhike\" until the Dec 8–9 decision. M2 +5.7% YoY in September 2026: $23,413.9B (FRED M2SL, last updated Oct 27, rechecked Nov 18) vs $22,149.2B in September 2025; October M2 due Nov 24.", "mom": "−22.2% used. Coinbase: $82,333 (13:30–13:35 UTC Oct 19, 5-min close) to $64,073 (13:30 UTC Nov 18), exactly 30 days = −22.18%. Yesterday's equivalent was −20.1%.", "sent": "Reading 11 (extreme fear) for Nov 18 (Alternative.me API, checked ~13:40 UTC Nov 18); 12 on Nov 17, 10 on Nov 15–16, 13 on Nov 14.", "val": "About $64,073 at 13:30 UTC Nov 18 (Coinbase Exchange 5-min candle, last price $64,072.59). Cross-checks: Kraken last trade $64,669 and CryptoNews AU $64,662 earlier this morning; CoinDesk ~$64,100 (via news digest). Within 1%; Coinbase used. CoinGecko could not be opened today. The trend line itself is the meter's model estimate, not a market figure."}, "news": [{"d": "2026-11-18", "i": -1, "t": "MARA raises $185M in bonds for its Ohio power-plant deal after selling 13,597 BTC to repay loans as it shifts toward AI"}, {"d": "2026-11-17", "i": -1, "t": "Spot Bitcoin ETFs swing back to a $239.9M outflow, led by $209.5M out of BlackRock's IBIT"}, {"d": "2026-11-16", "i": 1, "t": "Twenty One Capital buys 154 BTC (~$10M at ~$64,800), its first purchase since listing, now holds ~43,668 BTC"}, {"d": "2026-11-16", "i": 1, "t": "Wells Fargo's 13F shows its IBIT position more than doubled in Q3 to about $2.35B"}, {"d": "2026-11-16", "i": 1, "t": "Spot Bitcoin ETFs snap a seven-day outflow streak with a small $7.9M inflow; BlackRock's IBIT takes in $76.5M, ending 11 days of outflows"}, {"d": "2026-11-16", "i": -1, "t": "Supreme Court declines Custodia Bank's case, leaving the Fed free to deny crypto banks a master account"}, {"d": "2026-11-16", "i": 1, "t": "Strategy buys 485 BTC for $33.4M (Nov 9–15) at about $68,887 each, now holds 850,849 BTC"}, {"d": "2026-11-16", "i": 1, "t": "Strive adds 251 BTC last week, lifting its holdings to 43,404 BTC"}, {"d": "2026-11-16", "i": 1, "t": "Russia opens Bitcoin buying to ordinary investors from Nov 17, capped at 300,000 rubles a year per broker"}, {"d": "2026-11-16", "i": -1, "t": "Crypto stocks slide premarket as MSCI prepares to drop treasury companies, led by Strategy, from its indexes at month end"}]};
+/*DAILY-HISTORY*/const EMBED_HIST=[{"date": "2026-10-28", "inputs": {"chg30": -2.7, "corp30": 13166, "corpYTD": 202000, "etf30": -78, "etfYTD": 0.94, "fed": "holdhike", "fng": 50, "hash30": 5.9, "hashYoY": 0, "m2": 5.7, "price": 81100}, "newsSum": 0}, {"date": "2026-10-29", "inputs": {"chg30": -5.3, "corp30": 13166, "corpYTD": 202500, "etf30": 29, "etfYTD": 1.08, "fed": "holdhike", "fng": 51, "hash30": 5.9, "hashYoY": 0, "m2": 5.7, "price": 79848}, "newsSum": 1}, {"date": "2026-10-30", "inputs": {"chg30": -8.8, "corp30": 13166, "corpYTD": 202500, "etf30": -20, "etfYTD": 1.1, "fed": "holdhike", "fng": 30, "hash30": 11.8, "hashYoY": 0, "m2": 5.7, "price": 77353}, "newsSum": -1}, {"date": "2026-10-31", "inputs": {"chg30": -7.7, "corp30": 13166, "corpYTD": 202500, "etf30": -515, "etfYTD": 0.46, "fed": "holdhike", "fng": 30, "hash30": 11.8, "hashYoY": 0, "m2": 5.7, "price": 77457}, "newsSum": -3}, {"date": "2026-11-01", "inputs": {"chg30": -10.1, "corp30": 13166, "corpYTD": 202500, "etf30": -808, "etfYTD": 0.46, "fed": "holdhike", "fng": 34, "hash30": 11.8, "hashYoY": -5, "m2": 5.7, "price": 77854}, "newsSum": -5}, {"date": "2026-11-02", "inputs": {"chg30": -8.3, "corp30": 15324, "corpYTD": 204679, "etf30": -808, "etfYTD": 0.37, "fed": "holdhike", "fng": 37, "hash30": 11.8, "hashYoY": -5, "m2": 5.7, "price": 77825}, "newsSum": -4}, {"date": "2026-11-03", "inputs": {"chg30": -9, "corp30": 15324, "corpYTD": 204679, "etf30": -1206, "etfYTD": -0.03, "fed": "holdhike", "fng": 26, "hash30": 11.8, "hashYoY": -5, "m2": 5.7, "price": 77508}, "newsSum": -5}, {"date": "2026-11-04", "inputs": {"chg30": -9, "corp30": 14990, "corpYTD": 204679, "etf30": -1322, "etfYTD": -0.15, "fed": "holdhike", "fng": 34, "hash30": 11.8, "hashYoY": -6, "m2": 5.7, "price": 78251}, "newsSum": 0}, {"date": "2026-11-05", "inputs": {"chg30": -7.7, "corp30": 12842, "corpYTD": 204679, "etf30": -1157, "etfYTD": -0.08, "fed": "holdhike", "fng": 50, "hash30": 11.8, "hashYoY": -5, "m2": 5.7, "price": 79601}, "newsSum": -4}, {"date": "2026-11-06", "inputs": {"chg30": -9, "corp30": 12850, "corpYTD": 204687, "etf30": -1706, "etfYTD": -0.51, "fed": "holdhike", "fng": 28, "hash30": 11.8, "hashYoY": -5, "m2": 5.7, "price": 75818}, "newsSum": -8}, {"date": "2026-11-07", "inputs": {"chg30": -7.8, "corp30": 12850, "corpYTD": 204687, "etf30": -1631, "etfYTD": -0.91, "fed": "holdhike", "fng": 28, "hash30": 11.8, "hashYoY": -7, "m2": 5.7, "price": 75810}, "newsSum": -8}, {"date": "2026-11-08", "inputs": {"chg30": -8.1, "corp30": 12850, "corpYTD": 204687, "etf30": -1387, "etfYTD": -0.91, "fed": "holdhike", "fng": 28, "hash30": 11.8, "hashYoY": -6, "m2": 5.7, "price": 75924}, "newsSum": -3}, {"date": "2026-11-09", "inputs": {"chg30": -9.9, "corp30": 10575, "corpYTD": 205723, "etf30": -1408, "etfYTD": -0.91, "fed": "holdhike", "fng": 29, "hash30": 11.8, "hashYoY": -6, "m2": 5.7, "price": 74596}, "newsSum": -3}, {"date": "2026-11-10", "inputs": {"chg30": -11, "corp30": -3010, "corpYTD": 205735, "etf30": -1609, "etfYTD": -1.12, "fed": "holdhike", "fng": 32, "hash30": 11.8, "hashYoY": -6, "m2": 5.7, "price": 73885}, "newsSum": -6}, {"date": "2026-11-11", "inputs": {"chg30": -11.4, "corp30": -3231, "corpYTD": 205764, "etf30": -1704, "etfYTD": -1.21, "fed": "holdhike", "fng": 29, "hash30": 11.8, "hashYoY": -6, "m2": 5.7, "price": 73734}, "newsSum": -4}, {"date": "2026-11-12", "inputs": {"chg30": -12.8, "corp30": -3231, "corpYTD": 205764, "etf30": -1939, "etfYTD": -1.51, "fed": "holdhike", "fng": 28, "hash30": 11.8, "hashYoY": -6, "m2": 5.7, "price": 72548}, "newsSum": -5}, {"date": "2026-11-13", "inputs": {"chg30": -15.8, "corp30": -6053, "corpYTD": 205764, "etf30": -2398, "etfYTD": -1.79, "fed": "holdhike", "fng": 20, "hash30": 11.8, "hashYoY": -6, "m2": 5.7, "price": 68913}, "newsSum": -5}, {"date": "2026-11-14", "inputs": {"chg30": -17, "corp30": -6053, "corpYTD": 205764, "etf30": -2322, "etfYTD": -1.98, "fed": "holdhike", "fng": 13, "hash30": 1.6, "hashYoY": -13, "m2": 5.7, "price": 66670}, "newsSum": -6}, {"date": "2026-11-15", "inputs": {"chg30": -19.9, "corp30": -6053, "corpYTD": 205764, "etf30": -2327, "etfYTD": -1.98, "fed": "holdhike", "fng": 10, "hash30": -4.1, "hashYoY": -13, "m2": 5.7, "price": 65449}, "newsSum": -5}, {"date": "2026-11-16", "inputs": {"chg30": -21, "corp30": -6540, "corpYTD": 206500, "etf30": -2245, "etfYTD": -1.98, "fed": "holdhike", "fng": 10, "hash30": -4.1, "hashYoY": -13, "m2": 5.7, "price": 64315}, "newsSum": 0}, {"date": "2026-11-17", "inputs": {"chg30": -20.1, "corp30": -6540, "corpYTD": 206500, "etf30": -2237, "etfYTD": -1.97, "fed": "holdhike", "fng": 12, "hash30": -4.1, "hashYoY": -13, "m2": 5.7, "price": 64898}, "newsSum": 1}, {"date": "2026-11-18", "inputs": {"chg30": -22.2, "corp30": -6653, "corpYTD": 206654, "etf30": -2477, "etfYTD": -2.21, "fed": "holdhike", "fng": 11, "hash30": -4.1, "hashYoY": -13, "m2": 5.7, "price": 64073}, "newsSum": 2}];
+const DATA_KEYS=["price","chg30","fng","etf30","corp30","hash30","m2","fed","etfYTD","corpYTD","hashYoY"],PREF_KEYS=["view","cycle","upOdds","dnOdds"];
+const PREFS={view:"blend",cycle:100,upOdds:8,dnOdds:4};
+// monthly closes (Coin Metrics, daily close at month end) from Jul 2010 to May 23, 2026, then dated points
+const HIST={"start":"2010-07","closes":[0.07,0.06,0.06,0.19,0.21,0.3,0.53,0.86,0.78,3.5,8.72,16,13,8.2,5.14,3.27,2.97,4.71,5.54,4.87,4.89,4.94,5.18,6.68,9.32,10,12,11,13,14,21,33,94,139,128,89,98,128,126,203,1119,730,803,551,455,449,628,639,582,479,389,337,379,321,217,255,245,236,229,264,285,231,237,314,377,430,366,438,416,450,531,674,625,572,609,699,742,969,968,1188,1082,1382,2299,2453,2863,4740,4335,6429,9997,13921,10050,10307,6922,9229,7479,6376,7725,7025,6604,6306,3973,3687,3410,3793,4094,5267,8556,10843,10059,9605,8282,9155,7556,7167,9357,8582,6432,8652,9434,9144,11338,11678,10772,13807,19664,29023,33158,45359,58792,57741,37313,35065,41793,47219,43782,61433,57097,46355,38463,43179,45562,37714,31831,19333,23356,20025,19435,20491,17177,16524,23130,23146,28515,29362,27218,30485,29220,25955,26978,34636,37713,42217,42589,61395,71227,60636,67378,62763,64691,58960,63260,70367,96464,93390,102263,84244,82461,94237,104709,107153,115848,108316,113972,109554,90608,87517,78702,66966,68215,76300,76620],"lastDate":"2026-05-23"};
+const HIST_EXTRA=[["2026-06-30",57717,"2026 low (intraday)"],["2026-08-10",64279,"Strategy filing"],["2026-10-08",82606,"ETF 1,000-day tally"],["2026-10-28",81100,"today"]];
+// walk-forward backtest: [origin month, price, [p10,p50,p90] in 12 months, actual, [p10,p50,p90] in 24 months, actual]
+const BT={"eras":[{"label":"2015\u20132019","note":"out of sample, never used for tuning","s12":{"n":47,"inBand":37,"pctIn":79,"biasPct":-8,"dirHit":94},"s24":{"n":47,"inBand":44,"pctIn":94,"biasPct":8,"dirHit":89}},{"label":"2019\u20132025","note":"the period the settings were tuned on","s12":{"n":72,"inBand":56,"pctIn":78,"biasPct":-17,"dirHit":67},"s24":{"n":60,"inBand":49,"pctIn":82,"biasPct":-29,"dirHit":75}},{"label":"All","note":"every month tested","s12":{"n":119,"inBand":93,"pctIn":78,"biasPct":-14,"dirHit":77},"s24":{"n":107,"inBand":93,"pctIn":87,"biasPct":-15,"dirHit":81}}],"s12":{"n":119,"inBand":93,"pctIn":78,"biasPct":-14,"dirHit":77},"s24":{"n":107,"inBand":93,"pctIn":87,"biasPct":-15,"dirHit":81},"rows":[["2015-07",285,[569,1104,2160],625,[1548,3634,8212],2863],["2015-08",231,[537,1037,2038],572,[1546,3617,8219],4740],["2015-09",237,[571,1102,2168],609,[1640,3829,8725],4335],["2015-10",314,[700,1348,2652],699,[1870,4369,10003],6429],["2015-11",377,[807,1560,3075],742,[2073,4837,11092],9997],["2015-12",430,[905,1750,3462],969,[2262,5284,12124],13921],["2016-01",366,[865,1680,3316],968,[2246,5266,12096],10050],["2016-02",438,[988,1920,3787],1188,[2438,5745,13212],10307],["2016-03",416,[998,1939,3832],1082,[2466,5801,13419],6922],["2016-04",450,[1077,2099,4147],1382,[2575,6018,14013],9229],["2016-05",531,[1219,2387,4717],2299,[2713,6376,14827],7479],["2016-06",674,[1434,2804,5565],2453,[2892,6818,15876],6376],["2016-07",625,[1424,2788,5516],2863,[2785,6582,15408],7725],["2016-08",572,[1404,2742,5433],4740,[2651,6279,14780],7025],["2016-09",609,[1496,2910,5796],4335,[2621,6214,14722],6604],["2016-10",699,[1653,3231,6437],6429,[2635,6258,14909],6306],["2016-11",742,[1752,3431,6836],9997,[2585,6177,14733],3973],["2016-12",969,[2071,4052,8104],13921,[2689,6444,15440],3687],["2017-01",968,[2104,4122,8245],10050,[2595,6228,15011],3410],["2017-02",1188,[2370,4644,9328],10307,[2679,6463,15602],3793],["2017-03",1082,[2264,4433,8914],6922,[2541,6131,14904],4094],["2017-04",1382,[2564,5024,10122],9229,[2676,6483,15805],5267],["2017-05",2299,[3315,6507,13116],7479,[3057,7444,18190],8556],["2017-06",2453,[3340,6562,13217],6376,[3085,7515,18478],10843],["2017-07",2863,[3497,6879,13876],7725,[3209,7820,19361],10059],["2017-08",4740,[4387,8661,17443],7025,[3715,9054,22573],9605],["2017-09",4335,[3973,7880,15800],6604,[3632,8880,22216],8282],["2017-10",6429,[4644,9236,18528],6306,[4106,10083,25293],9155],["2017-11",9997,[5570,11082,22233],3973,[4724,11604,29168],7556],["2017-12",13921,[6315,12529,25110],3687,[5286,12992,32644],7167],["2018-01",10050,[5052,9999,19998],3410,[4922,12085,30432],9357],["2018-02",10307,[5061,10001,19948],3793,[5089,12416,31467],8582],["2018-03",6922,[3954,7781,15512],4094,[4667,11388,29003],6432],["2018-04",9229,[4514,8892,17686],5267,[5241,12801,32789],8652],["2018-05",7479,[3978,7845,15647],8556,[5123,12533,32261],9434],["2018-06",6376,[3645,7205,14398],10843,[5102,12533,32235],9144],["2018-07",7725,[4086,8076,16206],10059,[5666,13960,35918],11338],["2018-08",7025,[3968,7858,15792],9605,[5813,14368,37079],11678],["2018-09",6604,[3954,7838,15800],8282,[6033,14955,38715],10772],["2018-10",6306,[4026,7953,16089],9155,[6320,15687,40808],13807],["2018-11",3973,[3281,6491,13150],7556,[5861,14558,38087],19664],["2018-12",3687,[3313,6555,13328],7167,[6103,15220,39928],29023],["2019-01",3410,[3348,6636,13527],9357,[6347,15879,41811],33158],["2019-02",3793,[3719,7399,15084],8582,[6932,17389,45741],45359],["2019-03",4094,[4083,8158,16632],6432,[7522,18899,49936],58792],["2019-04",5267,[4922,9841,20105],8652,[8557,21506,56957],57741],["2019-05",8556,[6728,13483,27524],9434,[10419,26191,69621],37313],["2019-06",10843,[10400,19886,37283],9144,[17767,39234,85043],35065],["2019-07",10059,[10410,19924,37316],11338,[18178,40163,87400],41793],["2019-08",9605,[10568,20225,37884],11678,[18714,41448,90188],47219],["2019-09",8282,[10127,19396,36311],10772,[18639,41369,90097],43782],["2019-10",9155,[11096,21250,39936],13807,[19947,44435,96739],61433],["2019-11",7556,[10357,19859,37405],19664,[19539,43583,95266],57097],["2019-12",7167,[10438,19999,37762],29023,[19913,44632,97672],46355],["2020-01",9357,[12462,23893,45235],33158,[22183,49899,108911],38463],["2020-02",8582,[12247,23478,44497],45359,[22119,49953,108883],43179],["2020-03",6432,[10799,20698,39226],58792,[20663,46829,102295],45562],["2020-04",8652,[13029,25023,47316],57741,[22682,51692,112961],37714],["2020-05",9434,[14025,26968,50924],37313,[23245,53185,115882],31831],["2020-06",9144,[14132,27179,51352],35065,[22801,52101,113696],19333],["2020-07",11338,[16256,31339,59250],41793,[23787,54539,119209],23356],["2020-08",11678,[16891,32644,61608],47219,[23320,53464,117137],20025],["2020-09",10772,[16500,31894,60323],43782,[22029,50500,110643],19435],["2020-10",13807,[19241,37298,70607],61433,[22814,52381,115153],20491],["2020-11",19664,[23716,46124,87306],57097,[24399,55977,123638],17177],["2020-12",29023,[29770,57929,109952],46355,[26354,60606,134323],16524],["2021-01",33158,[32400,63103,120101],38463,[26572,61128,136019],23130],["2021-02",45359,[38609,75205,143446],43179,[28430,65602,146125],23146],["2021-03",58792,[44364,86425,165252],45562,[29968,69146,154883],28515],["2021-04",57741,[43482,84717,162524],37714,[29282,67789,151954],29362],["2021-05",37313,[33636,65751,126168],31831,[25489,59043,132586],27218],["2021-06",35065,[31570,61858,118820],19333,[24924,57427,129623],30485],["2021-07",41793,[33403,65570,125706],23356,[26185,60159,135957],29220],["2021-08",47219,[34129,66778,128403],20025,[27083,62299,141157],25955],["2021-09",43782,[31111,60938,117459],19435,[26538,61045,139024],26978],["2021-10",61433,[35310,69285,133756],20491,[29454,68014,154828],34636],["2021-11",57097,[32221,63160,121953],17177,[29073,67483,152839],37713],["2021-12",46355,[27401,53614,103704],16524,[27683,64597,146194],42217],["2022-01",38463,[23675,46390,89896],23130,[26737,62313,140659],42589],["2022-02",43179,[24424,47800,92855],23146,[28163,65889,148149],61395],["2022-03",45562,[24505,47906,93278],28515,[29324,68630,154252],71227],["2022-04",37714,[21784,42594,83208],29362,[28561,66897,150329],60636],["2022-05",31831,[19780,38573,75607],27218,[29016,68025,153300],67378],["2022-06",19333,[15432,30100,58997],30485,[26205,61721,138417],62763],["2022-07",23356,[17626,34346,67396],29220,[29100,68667,153676],64691],["2022-08",20025,[16851,32838,64337],25955,[29306,69177,155431],58960],["2022-09",19435,[17247,33616,65831],26978,[30581,72464,162971],63260],["2022-10",20491,[18544,36170,70777],34636,[32767,77657,175470],70367],["2022-11",17177,[17604,34338,67185],37713,[32752,77658,175585],96464],["2022-12",16524,[18045,35152,68834],42217,[34184,80995,183656],93390],["2023-01",23130,[22609,44139,86454],42589,[39701,94237,213968],102263],["2023-02",23146,[23512,45906,90173],61395,[41517,98439,224206],84244],["2023-03",28515,[27445,53587,105602],71227,[46430,109613,250389],82461],["2023-04",29362,[29076,56640,111964],60636,[49104,115495,263602],94237],["2023-05",27218,[24659,46951,87919],67378,[37120,82087,172696],104709],["2023-06",30485,[27035,51497,96443],62763,[39608,87679,184352],107153],["2023-07",29220,[27371,51887,97454],64691,[40361,89343,188424],115848],["2023-08",25955,[26524,50108,94112],58960,[40157,89136,188112],108316],["2023-09",26978,[27859,52606,98940],63260,[41820,92611,196095],113972],["2023-10",34636,[32750,61990,116546],70367,[46334,102478,217044],109554],["2023-11",37713,[35148,66645,125144],96464,[48698,108135,227785],90608],["2023-12",42217,[38276,72673,136444],93390,[51378,114451,240541],87517],["2024-01",42589,[39355,74895,140603],102263,[52334,116690,245725],78702],["2024-02",61395,[49025,93171,175224],84244,[58810,131121,276603],66966],["2024-03",71227,[54345,103084,194258],82461,[61529,137175,290363],68215],["2024-04",60636,[50761,96289,181583],94237,[58357,130432,276349],76300],["2024-05",67378,[54722,103809,195964],104709,[59361,132696,282104],76620],["2024-06",62763,[53538,101708,192468],107153,[56988,127408,271165],null],["2024-07",64691,[55288,105197,198873],115848,[55974,125161,268073],null],["2024-08",58960,[53362,101829,192673],108316,[52792,118086,254628],null],["2024-09",63260,[56190,107182,203395],113972,[52197,116614,252143],null],["2024-10",70367,[60371,115130,218851],109554,[52067,116488,252359],null],["2024-11",96464,[72350,138300,262647],90608,[55253,124066,268633],null],["2024-12",93390,[71627,136922,260462],87517,[53102,119564,259006],null],["2025-01",102263,[75390,144242,274729],78702,[53109,119775,259864],null],["2025-02",84244,[67635,129410,246941],66966,[49167,111039,241165],null],["2025-03",82461,[66092,126488,241552],68215,[48041,108273,235173],null],["2025-04",94237,[69754,133687,255025],76300,[49291,111048,241361],null],["2025-05",104709,[71850,137913,263237],76620,[50239,113401,246800],null]]};
+const store={get(k,f){try{const v=localStorage.getItem(k);return v?JSON.parse(v):f}catch(e){return f}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+const pick=(o,ks)=>{const r={};ks.forEach(k=>{if(o[k]!==undefined)r[k]=o[k]});return r};
+let saved=store.get("mm4.state",null);
+let S0=Object.assign({},PREFS,SNAPSHOT.inputs,saved?saved.prefs:{});
+let dataAsOf=SNAPSHOT.asOf,notes={},dataNews=SNAPSHOT.news.slice();
+if(saved&&saved.asOf>=SNAPSHOT.asOf){Object.assign(S0,saved.inputs);dataAsOf=saved.asOf;notes=saved.notes||{};if(saved.news)dataNews=saved.news}
+let userNews=store.get("mm4.mynews",[]);
+let news=dataNews.concat(userNews);
+let hist=store.get("mm3.hist",[]),shared=EMBED_HIST.slice(-180);
+let live={};
+function saveState(){store.set("mm4.state",{asOf:dataAsOf,inputs:pick(S0,DATA_KEYS),prefs:pick(S0,PREF_KEYS),notes,news:dataNews})}
+function applyData(d,force){
+  if(!d||!d.asOf||!d.inputs)return false;
+  if(!force&&d.asOf<=dataAsOf)return false;
+  DATA_KEYS.forEach(k=>{if(d.inputs[k]!==undefined&&d.inputs[k]!==null)S0[k]=d.inputs[k]});
+  dataAsOf=d.asOf;notes=d.notes||{};if(Array.isArray(d.news)&&d.news.length)dataNews=d.news;news=dataNews.concat(userNews);
+  buildBoards();renderNews();saveState();return true;
+}
+let active=new Set(), base=null, cur=null, prevMed=null, firstRun=true, blockHeight=973690, blockLive=false, drvKey="";
+
+/* ---------- formatting ---------- */
+const MON=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+const fmt$=v=>{if(!isFinite(v))return"—";if(v>=1e6)return"$"+(v/1e6).toFixed(v>=1e7?1:2)+"M";if(v>=1e3)return"$"+Math.round(v/1e3).toLocaleString("en-US")+"K";return"$"+Math.round(v)};
+const fmtFull=v=>"$"+Math.round(v).toLocaleString("en-US");
+const monthDate=(t0,j)=>{const d=new Date(t0);d.setUTCDate(1);d.setUTCMonth(d.getUTCMonth()+j);return d};
+const fmtMonth=(t0,j)=>{if(!isFinite(j))return"after "+monthDate(t0,264).getUTCFullYear();const d=monthDate(t0,j);return MON[d.getUTCMonth()]+" "+d.getUTCFullYear()};
+const monthsTo=(t0,year)=>{const d=new Date(t0);return (year-d.getUTCFullYear())*12+(11-d.getUTCMonth())};
+const sev=s=>s>=60?"var(--good)":s>=45?"var(--warn)":"var(--bad)";
+const band=S=>S>=75?["Full send",75]:S>=60?["Bullish",60]:S>=45?["Neutral",45]:S>=30?["Cautious",30]:["Risk-off",0];
+const aBand=A=>A>=70?"Strong":A>=58?"Healthy":A>=42?"Steady":A>=30?"Weakening":"Shrinking";
+const plural=(n,w)=>n+" "+w+(n===1?"":"s");
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const MONO="IBM Plex Mono, monospace", DISP="Big Shoulders Display, Impact, sans-serif";
+
+/* ---------- input cards ---------- */
+const CARDS={
+ S:[
+  {key:"val",name:"Valuation",sub:"price vs. trend line",inputs:[{id:"price",label:"BTC price (USD)",step:1}],
+   why:"Bitcoin has grown along a long-run trend for 13 years of full cycles. Buying below the line has historically been rewarded; far above it, less so.",
+   how:"At the trend line the score is <b>50</b>. Each 10% below adds about <b>4.6 points</b>; each 10% above takes about 4.1 off.",
+   src:"About $81,100 on Oct 28 (CoinGecko $81,113, Coinbase $81,246)."},
+  {key:"mom",name:"Momentum",sub:"last 30 days",inputs:[{id:"chg30",label:"30-day price change (%)",step:0.1}],
+   why:"Trends tend to persist for a while. A rising market pulls in buyers; a falling one pushes them out.",
+   how:"<b>50</b> plus <b>1.6 points</b> per 1% move in 30 days. −10% scores 34; +10% scores 66.",
+   src:"About −2.7%: $83,350 a month ago to ~$81,100 now (Coinbase)."},
+  {key:"sent",name:"Crowd mood",sub:"Fear & Greed, contrarian",inputs:[{id:"fng",label:"Fear & Greed index",type:"range",min:0,max:100}],
+   why:"When everyone is scared, sellers are mostly done and forward returns have been better. Extreme greed has often marked tops.",
+   how:"Score = <b>100 minus the index</b>. Fear at 15 scores 85; greed at 80 scores 20.",
+   src:"Reading 50 (neutral) on Oct 28, Alternative.me via ChainCatcher. 30-day average 62."},
+  {key:"etf",name:"Spot ETF flows",sub:"last 30 days",inputs:[{id:"etf30",label:"Net flows, last 30 days ($M)",step:1}],
+   why:"US spot ETFs hold about 1.293M BTC. Their daily net buying is the cleanest read on big-money demand right now.",
+   how:"$0 scores <b>50</b>; +$2.5B ≈ 88 and −$2.5B ≈ 12, on an S-curve so one huge day can't max it out.",
+   src:"−$77.5M over Sep 28–Oct 27 (TFTC daily table): Sep 28 +31.1, Sep 29 +66.2, Sep 30 −148.7, Oct 1–27 −26.1."},
+  {key:"corp",name:"Treasury buying",sub:"last 30 days",inputs:[{id:"corp30",label:"Net BTC bought by public companies, 30 days",step:10}],
+   why:"About 13,700 new BTC are mined each month. Buying above that absorbs all new supply.",
+   how:"0 BTC scores <b>30</b>; matching new supply scores <b>74</b>; double it scores about 91.",
+   src:"~13,170 BTC disclosed in 30 days by two companies alone: Strive 12,315 (now 43,000 BTC) and Strategy 851 (now 848,517). Smaller buyers not counted."},
+  {key:"hash",name:"Network security",sub:"last 30 days",inputs:[{id:"hash30",label:"Difficulty or hashrate change, 30 days (%)",step:0.5}],
+   why:"Miners add machines when they expect Bitcoin to be worth it. A rising hashrate is miners voting with capital.",
+   how:"0% scores <b>50</b>; +10% ≈ 79; −10% ≈ 21.",
+   src:"+5.9% over 30 days: −0.03% on Oct 3 and +5.92% to 140.58T on Oct 16 (CoinWarz)."},
+  {key:"macro",name:"Macro liquidity",sub:"Fed + money supply",inputs:[{id:"fed",type:"seg",label:"Fed policy",opts:[["cut","Cutting"],["hold","Holding"],["holdhike","Holding, hike risk"],["hike","Hiking"]]},{id:"m2",label:"US M2 growth, year over year (%)",step:0.1}],
+   why:"Bitcoin is priced in dollars. Cheap, plentiful money bids up scarce assets; tight money drains that bid.",
+   how:"60% Fed stance (cutting 75, holding 50, holding with hike risk 38, hiking 22) plus 40% M2 growth, where 4% scores 50.",
+   src:"Fed held 3.75–4.00% on Oct 28 by a 10–2 vote; two officials wanted a hike. M2 +5.7% year over year in September (FRED M2SL)."},
+  {key:"news",name:"News & adoption",sub:"your headline log",inputs:[],
+   why:"Laws, reserves, products and big buyers change who can own Bitcoin. Your ratings capture what the numbers miss.",
+   how:"<b>50</b> plus <b>7 points</b> per net impact point over the last 7 days.",
+   src:"Rate headlines in the log below the inputs."}],
+ A:[
+  {key:"etfY",name:"ETF demand this year",sub:"year to date",inputs:[{id:"etfYTD",label:"Spot ETF net flows, year to date ($B)",step:0.05}],
+   why:"Sustained ETF buying means advisors and institutions are building permanent positions, not trading.",
+   how:"$0 scores <b>50</b>; +$15B ≈ 88 (2024 saw ~$35B); −$15B ≈ 12.",
+   src:"About +$0.94B in 2026 through Oct 27 on Farside/TFTC daily data. One outlet reported +$355M (Oct 18). Say \u201cunder $1B\u201d."},
+  {key:"corpY",name:"Corporate accumulation",sub:"year to date vs. new supply",inputs:[{id:"corpYTD",label:"BTC added by companies this year",step:1000}],
+   why:"When companies absorb more coins than miners create, the float shrinks year after year.",
+   how:"Compared with every BTC mined so far this year. Nothing scores <b>30</b>; matching it scores 74; 1.5× scores about 85.",
+   src:"Businesses added 193,000 BTC through Oct 8 (River via TokenPost), plus ~9,300 disclosed by Strive and Strategy since: ~202,000 BTC."},
+  {key:"hashY",name:"Miner investment",sub:"hashrate, year over year",inputs:[{id:"hashYoY",label:"Hashrate change vs. a year ago (%)",step:1}],
+   why:"Hashrate growth over a full year shows miners committing long-term capital, beyond one month's noise.",
+   how:"0% scores <b>50</b>; +30% ≈ 88; −30% ≈ 12.",
+   src:"Not verified: trackers range from about −5% to +7% vs. a year ago. 0% used."}],
+ M:[
+  {key:"view",name:"Trend line",sub:"which fit to trust",inputs:[{id:"view",type:"seg",label:"Trend view",opts:[["blend","Blend"],["slowing","Slowing"],["recent","Recent"],["full","Full history"]]}],
+   why:"Blend mixes all three: 35% Slowing, 45% Recent cycles, 20% Full history. Model check shows why: the full-history slope overshot the last two cycles badly.",
+   how:"Slowing: slope keeps fading. Recent: slope of the last two cycle midpoints. Full history: best fit through all four.",
+   src:"Fitted from cycle tops and bottoms since 2013. Not scored."},
+  {key:"cyc",name:"4-year cycle strength",sub:"how big the swings are",inputs:[{id:"cycle",label:"Cycle strength (% of the 2025–26 swing)",type:"range",min:0,max:150}],
+   why:"Some argue ETFs and treasuries have broken the halving cycle. Set 0% to assume it's gone; 100% keeps the last cycle's swing, fading slowly.",
+   how:"The 2025–26 swing was about ±48% around the trend line. It shrinks each year in the model, as it has every cycle.",
+   src:"Not scored. Changes the shape of each future."},
+  {key:"shk",name:"Surprise shocks",sub:"rare, lasting jumps",inputs:[{id:"upOdds",label:"Yearly odds of an upside shock, like a nation buying (%)",type:"range",min:0,max:40},{id:"dnOdds",label:"Yearly odds of a downside shock, like a crackdown (%)",type:"range",min:0,max:40}],
+   why:"Most futures are shaped by slow forces, but a few will hit something big. Including both directions keeps the range honest.",
+   how:"An upside shock lifts the trend line 20% for good; a downside shock cuts it 25%.",
+   src:"Not scored. Default 8% up and 4% down per year."}]
+};
+const NUMS=["price","chg30","etf30","corp30","hash30","m2","etfYTD","corpYTD","hashYoY"], RANGES=["fng","cycle","upOdds","dnOdds"];
+const rangeSuffix=id=>id==="fng"?"":id==="cycle"?"%":"% a year";
+function buildBoards(){
+  [["S","boardS",SHORT_W],["A","boardA",LONG_W],["M","boardM",{}]].forEach(([g,id,W])=>{
+    const b=$(id);b.textContent="";
+    CARDS[g].forEach(f=>{
+      const card=document.createElement("div");card.className="f";
+      const w=W[f.key]?`weight ${Math.round(W[f.key]*100)}% · ${f.sub}`:f.sub;
+      let h=`<div class="hd"><div><h3>${f.name}</h3><div class="w">${w}</div></div>${W[f.key]?`<span class="pill" data-pill="${f.key}">—</span>`:""}</div>`;
+      f.inputs.forEach(inp=>{
+        if(inp.type==="seg")h+=`<div style="display:grid;gap:4px"><span class="label" style="font-size:10.5px">${inp.label}</span><div class="seg" data-seg="${inp.id}">${inp.opts.map(([v,l])=>`<button type="button" data-v="${v}">${l}</button>`).join("")}</div></div>`;
+        else if(inp.type==="range")h+=`<label for="${inp.id}">${inp.label}<input id="${inp.id}" type="range" min="${inp.min}" max="${inp.max}" step="1"></label><div class="rowv"><span>${inp.min}</span><span id="${inp.id}V">—</span><span>${inp.max}</span></div>`;
+        else h+=`<label for="${inp.id}">${inp.label}<input id="${inp.id}" type="number" step="${inp.step}"></label>`;
+      });
+      if(f.key==="news")h+=`<div class="mono" id="newsSumV" style="font-size:13px">—</div>`;
+      h+=`<details><summary>Why it matters & how it's scored</summary><p>${f.why}</p><p>${f.how}</p></details><div class="src"${f.key==="val"?' id="valSrc"':""}>${(notes[f.key]||f.src).replace(/</g,"&lt;")}${live[f.key]?` <b style="color:var(--good)">Live: ${live[f.key]}</b>`:""}</div>`;
+      card.innerHTML=h;b.appendChild(card);
+    });
+  });
+  NUMS.forEach(id=>{const el=$(id);el.value=S0[id];el.addEventListener("input",()=>{const v=parseFloat(el.value);if(isFinite(v)){S0[id]=v;schedule()}})});
+  RANGES.forEach(id=>{const el=$(id);el.value=S0[id];$(id+"V").textContent=S0[id]+rangeSuffix(id);el.addEventListener("input",()=>{S0[id]=+el.value;$(id+"V").textContent=S0[id]+rangeSuffix(id);schedule()})});
+  document.querySelectorAll("[data-seg]").forEach(el=>{const key=el.dataset.seg;
+    const sync=()=>el.querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",String(x.dataset.v===String(S0[key]))));
+    el.addEventListener("click",e=>{const x=e.target.closest("button");if(!x)return;S0[key]=x.dataset.v;sync();schedule()});sync()});
+}
+$("resetBtn").addEventListener("click",()=>{userNews=[];store.set("mm4.mynews",userNews);Object.assign(S0,PREFS);applyData(saved&&saved.asOf>SNAPSHOT.asOf?saved:SNAPSHOT,true);updateData(true)});
+
+/* ---------- what-if scenarios ---------- */
+const SCEN=[
+ {id:"cut",nerd:1,t:"Fed pivots to cuts",d:"Cuts begin and money growth speeds up to 7%.",up:1,ap:s=>{s.fed="cut";s.m2=7}},
+ {id:"etf",t:"ETF flood",d:"$5B of ETF buying in a month, and 2026 ends $10B net positive.",up:1,ap:s=>{s.etf30=5000;s.etfYTD=10}},
+ {id:"corp",t:"Treasury buying spree",d:"Companies buy 30,000 BTC this month on top of this year's pace.",up:1,ap:s=>{s.corp30=30000;s.corpYTD+=30000}},
+ {id:"nation",t:"A nation-state starts buying",d:"An upside shock lands today; odds of more rise to 20% a year.",up:1,ap:s=>{s.shockNow=true;s.upOdds=20}},
+ {id:"miners",nerd:1,t:"Mining boom",d:"Hashrate +15% this month and +25% on the year.",up:1,ap:s=>{s.hash30=15;s.hashYoY=25}},
+ {id:"crash",t:"Flash crash to $60K",d:"Price drops 26%, fear hits 12, ETFs bleed $2B in a month.",up:0,ap:s=>{s.price=60000;s.chg30=-26;s.fng=12;s.etf30=-2000}},
+ {id:"hike",nerd:1,t:"Fed hikes in December",d:"Another hike and money growth slows to 3%.",up:0,ap:s=>{s.fed="hike";s.m2=3}},
+ {id:"crack",t:"Major crackdown",d:"A downside shock lands today; odds of more rise to 10% a year.",up:0,ap:s=>{s.shockDownNow=true;s.dnOdds=10}},
+ {id:"nocycle",t:"The cycle is dead",d:"ETFs and treasuries smooth out the 4-year boom and bust.",up:1,ap:s=>{s.cycle=0}}
+];
+function buildScen(){
+  $("scen").innerHTML=SCEN.map(x=>`<button type="button" class="sc${x.nerd?" nerd":""}" data-id="${x.id}" aria-pressed="false"><span class="tag ${x.up?"up":"dn"}">${x.up?"Good news":"Bad news"}</span><span class="t">${x.t}</span><span class="d">${x.d}</span></button>`).join("");
+  $("scen").addEventListener("click",e=>{const b=e.target.closest(".sc");if(!b)return;const id=b.dataset.id;active.has(id)?active.delete(id):active.add(id);b.setAttribute("aria-pressed",String(active.has(id)));schedule()});
+}
+$("whatreset").addEventListener("click",()=>{active.clear();document.querySelectorAll(".sc").forEach(b=>b.setAttribute("aria-pressed","false"));schedule()});
+
+/* ---------- news ---------- */
+const DAYMS=864e5;
+function newsSum(){const cut=Date.now()-7*DAYMS;return news.filter(n=>Date.parse(n.d+"T23:59:00Z")>=cut).reduce((a,n)=>a+n.i,0)}
+function renderNews(){
+  const cut=Date.now()-7*DAYMS,ul=$("newsList");ul.textContent="";
+  news.slice().sort((a,b)=>b.d.localeCompare(a.d)).forEach(n=>{
+    const old=Date.parse(n.d+"T23:59:00Z")<cut,li=document.createElement("li");if(old)li.className="old";
+    const imp=document.createElement("span");imp.className="imp";imp.textContent=(n.i>0?"+":n.i<0?"−":"")+Math.abs(n.i);imp.style.color=n.i>0?"var(--good)":n.i<0?"var(--bad)":"var(--muted)";
+    const tx=document.createElement("span");tx.className="t";tx.textContent=n.t;
+    const dt=document.createElement("span");dt.className="dt";const dd=new Date(n.d+"T12:00:00Z");dt.textContent=MON[dd.getUTCMonth()]+" "+dd.getUTCDate()+(old?" · older than 7 days, not counted":"");tx.appendChild(dt);
+    const del=document.createElement("button");del.type="button";del.setAttribute("aria-label","Remove headline");del.textContent="×";
+    del.onclick=()=>{news=news.filter(x=>x!==n);userNews=userNews.filter(x=>x!==n);dataNews=dataNews.filter(x=>x!==n);store.set("mm4.mynews",userNews);saveState();renderNews();schedule()};
+    li.append(imp,tx,del);ul.appendChild(li);
+  });
+}
+$("newsForm").addEventListener("submit",e=>{e.preventDefault();const t=$("newsText").value.trim();if(!t)return;
+  const d=new Date(),iso=d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+  const item={d:iso,t,i:parseInt($("newsImp").value,10),mine:true};userNews.push(item);news.push(item);store.set("mm4.mynews",userNews);$("newsText").value="";renderNews();schedule()});
+
+/* ---------- gauge ---------- */
+function drawGauge(){
+  const cx=160,cy=160,r=128,pt=(v,rr)=>{const a=Math.PI*(1-v/100);return[cx+rr*Math.cos(a),cy-rr*Math.sin(a)]};
+  const segs=[[0,30,"var(--bad)",.95],[30,45,"var(--bad)",.55],[45,60,"var(--warn)",.75],[60,75,"var(--good)",.6],[75,100,"var(--good)",.95]];
+  let s=`<path d="M ${cx-r-14} ${cy} A ${r+14} ${r+14} 0 0 1 ${cx+r+14} ${cy}" fill="var(--dial)" stroke="var(--line)"/>`;
+  segs.forEach(([a,b,c,o])=>{const[x1,y1]=pt(a+.5,r-4),[x2,y2]=pt(b-.5,r-4);s+=`<path d="M ${x1} ${y1} A ${r-4} ${r-4} 0 0 1 ${x2} ${y2}" fill="none" stroke="${c}" stroke-width="12" opacity="${o}"/>`});
+  for(let v=0;v<=100;v+=5){const big=v%25===0,[x1,y1]=pt(v,r-14),[x2,y2]=pt(v,r-(big?30:22));s+=`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="var(--dial-ink)" stroke-width="${big?2.2:1}" opacity=".75"/>`;
+    if(big){const[x,y]=pt(v,r-44);s+=`<text x="${x}" y="${y+4}" text-anchor="middle" font-family="${MONO}" font-size="11" fill="var(--dial-ink)">${v}</text>`}}
+  s+=`<g id="needleG" style="transform-origin:${cx}px ${cy}px;transform:rotate(-90deg)"><path d="M ${cx-5} ${cy} L ${cx} ${cy-r+20} L ${cx+5} ${cy} Z" fill="var(--orange)"/></g>`;
+  s+=`<circle cx="${cx}" cy="${cy}" r="11" fill="var(--dial-ink)"/><circle cx="${cx}" cy="${cy}" r="4" fill="var(--orange)"/>`;
+  s+=`<text id="gnum" x="${cx}" y="${cy-38}" text-anchor="middle" font-family="${DISP}" font-weight="900" font-size="46" fill="var(--dial-ink)">—</text>`;
+  s+=`<text x="${cx-r+4}" y="${cy+24}" font-family="${MONO}" font-size="10" fill="var(--muted)">BEAR</text><text x="${cx+r-4}" y="${cy+24}" text-anchor="end" font-family="${MONO}" font-size="10" fill="var(--muted)">BULL</text>`;
+  $("gauge").innerHTML=s;
+}
+function setNeedle(S){const g=$("needleG");requestAnimationFrame(()=>requestAnimationFrame(()=>{g.style.transform=`rotate(${S*1.8-90}deg)`}));$("gnum").textContent=S.toFixed(1)}
+function rollDate(t0,from,to){
+  const el=$("medDate");
+  if(reduce||from==null||!isFinite(from)||!isFinite(to)||from===to){el.textContent=fmtMonth(t0,to);return}
+  const st=performance.now(),dur=650,tick=now=>{const p=Math.min(1,(now-st)/dur),e=1-Math.pow(1-p,3);el.textContent=fmtMonth(t0,Math.round(from+(to-from)*e));if(p<1)requestAnimationFrame(tick)};
+  requestAnimationFrame(tick);
+}
+
+/* ---------- contributions ---------- */
+const NAMES={val:"Valuation",mom:"Momentum",sent:"Crowd mood",etf:"Spot ETF flows",corp:"Treasury buying",hash:"Network security",macro:"Macro liquidity",news:"News & adoption",etfY:"ETF demand this year",corpY:"Corporate accumulation",hashY:"Miner investment"};
+function contribRows(sc,W,max){
+  const rows=Object.keys(W).map(k=>({k,pts:W[k]*(sc[k]-50),sc:sc[k],w:W[k]})).sort((a,b)=>b.pts-a.pts);
+  return {rows,html:rows.map(r=>{const w=Math.min(50,Math.abs(r.pts)/max*50),left=r.pts>=0?50:50-w,c=r.pts>=0.25?"var(--good)":r.pts<=-0.25?"var(--bad)":"var(--muted)";
+    return `<div class="crow"><div class="nm">${NAMES[r.k]}<small>score ${r.sc.toFixed(0)} × ${Math.round(r.w*100)}%</small></div><div class="ctrack"><div class="cbar" style="left:${left}%;width:${Math.max(.6,w)}%;background:${c}"></div></div><div class="pts" style="color:${c}">${r.pts>=0?"+":"−"}${Math.abs(r.pts).toFixed(1)}</div></div>`}).join("")};
+}
+function drawContrib(f){
+  const a=contribRows(f.sc,SHORT_W,7.5),b=contribRows(f.lc,LONG_W,18);
+  $("contrib").innerHTML=a.html;$("contribA").innerHTML=b.html;$("sTot").textContent=f.S.toFixed(1);$("aTot").textContent=f.A.toFixed(1);
+  const sum=(rows,pos)=>rows.filter(r=>pos?r.pts>0:r.pts<0).reduce((x,r)=>x+r.pts,0);
+  $("ctot").innerHTML=`<span>Start <b>50.0</b></span><span>Up <b style="color:var(--good)">+${sum(a.rows,1).toFixed(1)}</b></span><span>Down <b style="color:var(--bad)">−${Math.abs(sum(a.rows,0)).toFixed(1)}</b></span><span>= <b>${f.S.toFixed(1)}</b></span><span>Biggest lift <b>${NAMES[a.rows[0].k]}</b> · biggest drag <b>${NAMES[a.rows[a.rows.length-1].k]}</b></span>`;
+  $("ctotA").innerHTML=`<span>Start <b>50.0</b></span><span>Up <b style="color:var(--good)">+${sum(b.rows,1).toFixed(1)}</b></span><span>Down <b style="color:var(--bad)">−${Math.abs(sum(b.rows,0)).toFixed(1)}</b></span><span>= <b>${f.A.toFixed(1)}</b></span><span>Trend slope ${f.A>=50?"+":"−"}${Math.abs(0.5*(f.A-50)/50).toFixed(2)} vs. history</span>`;
+}
+
+/* ---------- road ---------- */
+function drawRoad(sim,price){
+  const W=1000,H=250,x0=50,x1=W-50,lo=Math.log(50e3),hi=Math.log(1.25e6),X=v=>x0+(Math.log(v)-lo)/(hi-lo)*(x1-x0),yR=96;
+  let s=`<rect x="${x0}" y="${yR-9}" width="${x1-x0}" height="18" rx="9" fill="var(--panel-2)" stroke="var(--line)"/><rect x="${x0}" y="${yR-9}" width="${Math.max(0,X(price)-x0)}" height="18" rx="9" fill="var(--orange)"/>`;
+  [60e3,70e3,80e3,90e3,200e3,300e3,400e3,600e3,700e3,800e3,900e3].forEach(v=>s+=`<line x1="${X(v)}" x2="${X(v)}" y1="${yR+12}" y2="${yR+17}" stroke="var(--muted)" opacity=".5"/>`);
+  // stops shown on the road (index into MILESTONES); $150K is skipped because it crowds the ATH
+  const stops=[[0,"$100K"],[1,"ATH $126K"],[3,"$250K"],[4,"$500K"],[5,"$1M"]];
+  let prevX=-1e9,lvl=0;
+  stops.forEach(([q,name])=>{const v=MILESTONES[q],x=X(v),hit=price>=v,med=sim.fpQuant(q,.5),p30=sim.probBy(q,monthsTo(sim.t0,2030)),big=q===5;
+    lvl=(x-prevX<130&&lvl===0)?1:0;prevX=x;
+    const up=lvl?22:0,dn=lvl?44:0;
+    s+=`<line x1="${x}" x2="${x}" y1="${yR-26-up}" y2="${yR+9}" stroke="${big?"var(--orange)":"var(--fg)"}" stroke-width="${big?2.5:1.2}"/>`;
+    if(lvl)s+=`<line x1="${x}" x2="${x}" y1="${yR+12}" y2="${yR+22+dn}" stroke="var(--muted)" stroke-dasharray="2 3"/>`;
+    s+=`<circle cx="${x}" cy="${yR}" r="${big?8:5}" fill="${hit?"var(--orange)":"var(--bg)"}" stroke="${big?"var(--orange)":"var(--fg)"}" stroke-width="2"/>`;
+    s+=`<text x="${x}" y="${yR-32-up}" text-anchor="middle" font-family="${DISP}" font-weight="800" font-size="${big?22:17}" fill="${big?"var(--orange)":"var(--fg)"}">${name}</text>`;
+    s+=`<text x="${x}" y="${yR+38+dn}" text-anchor="middle" font-family="${MONO}" font-size="12.5" fill="var(--fg)">${hit?"reached":fmtMonth(sim.t0,med)}</text>`;
+    if(!hit)s+=`<text x="${x}" y="${yR+55+dn}" text-anchor="middle" font-family="${MONO}" font-size="11" fill="var(--muted)">${p30>=.995?"~100":Math.round(p30*100)}% by 2030</text>`;
+  });
+  const xp=X(price);
+  s+=`<path d="M ${xp} ${yR+12} l -6 10 h 12 z" fill="var(--teal)"/><text x="${xp}" y="${H-8}" text-anchor="${xp<x0+130?"start":"middle"}" font-family="${MONO}" font-size="12" fill="var(--teal)">▲ YOU ARE HERE · ${fmtFull(price)}</text>`;
+  s+=`<text x="${x1}" y="${H-8}" text-anchor="end" font-family="${MONO}" font-size="11.5" fill="var(--muted)">$1M is ${(1e6/price).toFixed(1)}× from here</text>`;
+  $("roadsvg").innerHTML=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Milestone road from today's price to one million dollars">${s}</svg>`;
+}
+
+/* ---------- futures chart ---------- */
+let G=null;
+const halvingT=()=>Date.now()+(1050000-blockHeight)*600000;
+function drawChart(sim,price,animate){
+  const W=1000,H=420,L=66,R=26,T=20,B=42,Mshow=Math.min(sim.M,monthsTo(sim.t0,2046)+1),lo=Math.log(30e3),hi=Math.log(1e7);
+  const X=j=>L+j/Mshow*(W-L-R),Y=v=>T+(1-(Math.log(clamp(v,30e3,1e7))-lo)/(hi-lo))*(H-T-B);
+  G={X,Y,Mshow,L,R,W,H,T,B,sim,price};
+  let s="";
+  [50e3,100e3,250e3,500e3,1e6,2.5e6,5e6].forEach(v=>{s+=`<line x1="${L}" x2="${W-R}" y1="${Y(v)}" y2="${Y(v)}" stroke="var(--line)" ${v===1e6?"":'stroke-dasharray="2 4"'}/><text x="${L-8}" y="${Y(v)+4}" text-anchor="end" font-family="${MONO}" font-size="11" fill="var(--muted)">${fmt$(v)}</text>`});
+  const y0=new Date(sim.t0).getUTCFullYear();
+  for(let y=y0+1;y<=2046;y++){const j=monthsTo(sim.t0,y-1)+1;if(j>Mshow)break;const x=X(j);s+=`<line x1="${x}" x2="${x}" y1="${T}" y2="${H-B}" stroke="var(--line)" opacity=".4"/>`;if((y-y0)%2===0)s+=`<text x="${x}" y="${H-B+18}" text-anchor="middle" font-family="${MONO}" font-size="11" fill="var(--muted)">${y}</text>`}
+  const hT=halvingT();for(let n=0;n<5;n++){const j=(hT+n*4*365.25*DAYMS-sim.t0)/(DAYMS*30.4375);if(j>0&&j<Mshow){const x=X(j);s+=`<line x1="${x}" x2="${x}" y1="${T}" y2="${H-B}" stroke="var(--teal)" stroke-dasharray="1 4" opacity=".8"/><text x="${x+4}" y="${T+12}" font-family="${MONO}" font-size="10" fill="var(--teal)">halving</text>`}}
+  const pathOf=a=>{let p=`M ${X(0)} ${Y(price)}`;for(let j=0;j<Mshow;j++)p+=` L ${X(j+1).toFixed(1)} ${Y(a[j]).toFixed(1)}`;return p};
+  const area=(a,b)=>{let p=pathOf(a);for(let j=Mshow-1;j>=0;j--)p+=` L ${X(j+1).toFixed(1)} ${Y(b[j]).toFixed(1)}`;return p+" Z"};
+  s+=`<path d="${area(sim.bands[0],sim.bands[4])}" fill="var(--orange-soft)" stroke="var(--orange)" stroke-opacity=".3"/><path d="${area(sim.bands[1],sim.bands[3])}" fill="var(--orange)" fill-opacity=".26"/>`;
+  sim.paths.forEach((p,i)=>{s+=`<path class="sample${animate?" draw":""}" d="${pathOf(p)}" fill="none" stroke="var(--muted)" stroke-width="1" opacity=".5" style="animation-delay:${i*90}ms"/>`});
+  let fp=`M ${X(0)} ${Y(sim.fairToday)}`;for(let j=0;j<Mshow;j++)fp+=` L ${X(j+1).toFixed(1)} ${Y(sim.fairPath[j]).toFixed(1)}`;
+  s+=`<path d="${fp}" fill="none" stroke="var(--teal)" stroke-width="2" stroke-dasharray="6 5"/><path d="${pathOf(sim.bands[2])}" fill="none" stroke="var(--orange)" stroke-width="3"/>`;
+  s+=`<line x1="${L}" x2="${W-R}" y1="${Y(1e6)}" y2="${Y(1e6)}" stroke="var(--orange)" stroke-width="1.5"/><text x="${L+8}" y="${Y(1e6)-8}" font-family="${DISP}" font-weight="800" font-size="19" fill="var(--orange)">$1,000,000</text>`;
+  const med=sim.fpQuant(5,.5);
+  if(isFinite(med)&&med<=Mshow){const x=X(med);s+=`<line x1="${x}" x2="${x}" y1="${Y(1e6)}" y2="${H-B}" stroke="var(--fg)" stroke-dasharray="3 3" opacity=".6"/><circle cx="${x}" cy="${Y(1e6)}" r="6" fill="var(--bg)" stroke="var(--fg)" stroke-width="2.5"/><text x="${x-10}" y="${Y(1e6)-10}" text-anchor="end" font-family="${MONO}" font-size="12" fill="var(--fg)">most likely ${fmtMonth(sim.t0,med)}</text>`}
+  s+=`<circle cx="${X(0)}" cy="${Y(price)}" r="5" fill="var(--teal)"/><text x="${X(0)+8}" y="${Y(price)+20}" font-family="${MONO}" font-size="11.5" fill="var(--teal)">today ${fmt$(price)}</text>`;
+  s+=`<g id="spinG"></g><g id="xh" style="display:none"><line id="xhl" y1="${T}" y2="${H-B}" stroke="var(--fg)" opacity=".5"/><rect id="xhb" rx="6" width="186" height="84" fill="var(--panel)" stroke="var(--line)"/><text id="xht" font-family="${MONO}" font-size="11.5" fill="var(--fg)"></text></g>`;
+  s+=`<rect id="xhit" x="${L}" y="${T}" width="${W-L-R}" height="${H-T-B}" fill="transparent" style="cursor:crosshair"/>`;
+  $("chart").innerHTML=`<svg id="csvg" viewBox="0 0 ${W} ${H}" role="img" aria-label="Simulated Bitcoin price ranges through 2046 on a log scale">${s}</svg>`;
+  if(animate)document.querySelectorAll("#chart .sample.draw").forEach(p=>p.style.setProperty("--len",Math.ceil(p.getTotalLength())));
+  const svg=$("csvg"),hit=$("xhit");
+  const move=e=>{const r=svg.getBoundingClientRect(),vx=(e.clientX-r.left)/r.width*W;let j=Math.round((vx-L)/(W-L-R)*Mshow);j=clamp(j,1,Mshow);
+    const x=X(j),b=sim.bands;$("xh").style.display="";$("xhl").setAttribute("x1",x);$("xhl").setAttribute("x2",x);
+    const bx=x>W-230?x-196:x+10;$("xhb").setAttribute("x",bx);$("xhb").setAttribute("y",T+6);
+    const lines=[fmtMonth(sim.t0,j),`median   ${fmt$(b[2][j-1])}`,`middle   ${fmt$(b[1][j-1])}–${fmt$(b[3][j-1])}`,`8 in 10  ${fmt$(b[0][j-1])}–${fmt$(b[4][j-1])}`,`$1M odds ${Math.round(sim.probBy(5,j)*100)}%`];
+    $("xht").innerHTML=lines.map((l,i)=>`<tspan x="${bx+10}" y="${T+24+i*14.5}"${i===0?' font-weight="600" fill="var(--orange)"':""}>${l}</tspan>`).join("")};
+  hit.addEventListener("pointermove",move);hit.addEventListener("pointerdown",move);hit.addEventListener("pointerleave",()=>$("xh").style.display="none");
+}
+
+/* ---------- spin a future ---------- */
+const UP_EX=["a G20 country starts buying Bitcoin for its national reserves","a giant pension fund makes Bitcoin a standard allocation","the US starts actively buying for its Strategic Bitcoin Reserve","a trillion-dollar tech company puts Bitcoin on its balance sheet","a big oil exporter starts settling trade in Bitcoin","the largest banks let every client buy and hold Bitcoin"];
+const DN_EX=["a top exchange collapses and freezes customer funds","major economies restrict self-custody","a large treasury company is forced to sell its stack","a deep global recession forces big holders to sell","a scare over quantum computing spooks holders until upgrades land"];
+const VIEW_TXT={slowing:["The Slowing trend","growth keeps fading the way it has every cycle, the most cautious view"],recent:["The Recent-cycles trend","growth matches the pace of the last two cycles"],full:["The Full-history trend","growth matches Bitcoin's whole history, the most bullish view"]};
+function maxDrawdown(p,end){let pk=p[0],pkJ=0,best=0,a=0,b=0;for(let j=1;j<end;j++){if(p[j]>pk){pk=p[j];pkJ=j}const dd=1-p[j]/pk;if(dd>best){best=dd;a=pkJ;b=j}}return {dd:best,a,b}}
+function cycleTops(p,t0){const out=[];const peak0=PIVOTS.filter(x=>x.type==="top").pop().t;for(let n=1;n<=5;n++){const tp=peak0+n*4*365.25*DAYMS,jc=Math.round((tp-t0)/(30.4375*DAYMS));if(jc-12<1||jc+12>p.length)continue;let mx=0,mj=0;for(let j=jc-12;j<=jc+12;j++)if(p[j-1]>mx){mx=p[j-1];mj=j}out.push({j:mj,v:mx})}return out}
+function spin(kind){
+  if(!cur)return;
+  const N=300,seed=(Math.random()*1e9)|0,sim=simulate(cur.s,cur.f,{N,seed,keep:N,trace:true,noBands:true}),t0=sim.t0;
+  const order=sim.traces.map((tr,i)=>({i,f:tr.first<0?1e9:tr.first})).sort((a,b)=>a.f-b.f);
+  const pickPos=kind==="lucky"?Math.floor(N*.1):kind==="typical"?Math.floor(N*.5):kind==="unlucky"?Math.floor(N*.9):Math.floor(Math.random()*N);
+  const idx=order[pickPos].i,tr=sim.traces[idx],p=sim.paths[idx],rank=Math.round((1-pickPos/N)*100);
+  const hitJ=tr.first<0?Infinity:tr.first,end=Math.min(p.length,monthsTo(t0,2046)+1),medJ=cur.sim.fpQuant(5,.5);
+  const stop=isFinite(hitJ)?hitJ:end,pre=tr.ev.filter(e=>e.j<=stop),ups=pre.filter(e=>e.up),dns=pre.filter(e=>!e.up),dd=maxDrawdown(p,stop),tops=cycleTops(p,t0).filter(t=>t.j<=stop+12).slice(0,4);
+  let ui=seed%UP_EX.length,di=seed%DN_EX.length;const exs=pre.map(e=>e.up?UP_EX[ui++%UP_EX.length]:DN_EX[di++%DN_EX.length]);
+  let title=!isFinite(hitJ)?"Not This Time":ups.length>=2&&!dns.length?"The Adoption Wave":ups.length&&dns.length?"Two Steps Forward, One Back":ups.length?"The Big Buyer Arrives":dns.length?"The Hard Road":dd.dd>0.75?"Through the Fire":tr.view==="full"?"Bitcoin Stays Bitcoin":tr.view==="recent"?"Steady Stacking":"The Long Grind";
+  const tag=kind==="lucky"?"Lucky future · faster than 9 in 10":kind==="typical"?"Typical future · right in the middle":kind==="unlucky"?"Unlucky future · slower than 9 in 10":`Random future · faster than ${clamp(rank,1,99)}% of the others`;
+  const vt=VIEW_TXT[tr.view];
+  const surprise=pre.length?pre.map((e,i)=>`<b style="color:${e.up?"var(--good)":"var(--bad)"}">${fmtMonth(t0,e.j)}</b>: ${e.up?"good news":"bad news"}, for example ${exs[i]}. Fair value ${e.up?"jumps 20%":"drops 25%"} for good.`).join("<br>"):`No big surprises ${isFinite(hitJ)?"before it got there":"in either direction"}. Just the trend, the cycle and everyday swings.`;
+  const luckTxt=tr.luck>4?"The first five years ran hot: more good months than bad, which pulled the whole path forward.":tr.luck<-4?"The first five years were rough: more bad months than good, which pushed everything later.":"Everyday ups and downs roughly evened out.";
+  const rs=[];
+  rs.push(tr.view==="full"?[1,"the most bullish trend line"]:tr.view==="slowing"?[-1,"the slowest trend line"]:[0,"a middle-of-the-road trend line"]);
+  if(ups.length)rs.push([1,ups.length===1?"a good surprise":ups.length+" good surprises"]);
+  if(dns.length)rs.push([-1,dns.length===1?"a bad surprise":dns.length+" bad surprises"]);
+  if(tr.luck>4)rs.push([1,"lucky early years"]);else if(tr.luck<-4)rs.push([-1,"rough early years"]);
+  const l2=tr.n2?tr.luck2/Math.sqrt(tr.n2):0;if(l2>0.6)rs.push([1,"a hot run in the later years"]);else if(l2<-0.6)rs.push([-1,"a cold stretch in the later years"]);
+  if(dd.dd>0.75)rs.push([-1,"a −"+Math.round(dd.dd*100)+"% crash"]);
+  const dir=!isFinite(hitJ)?-1:Math.abs(hitJ-medJ)<6?0:hitJ<medJ?1:-1;
+  const jn=a=>a.length>1?a.slice(0,-1).join(", ")+" and "+a[a.length-1]:a[0]||"";
+  const pro=rs.filter(r=>r[0]===dir&&dir!==0).map(r=>r[1]),con=rs.filter(r=>r[0]===-dir&&dir!==0).map(r=>r[1]);
+  let sw;
+  if(dir===0){const plus=rs.filter(r=>r[0]>0).map(r=>r[1]),minus=rs.filter(r=>r[0]<0).map(r=>r[1]);sw=`lands right on schedule: ${plus.length&&minus.length?jn(plus)+" balanced out "+jn(minus):plus.length?jn(plus)+", but nothing else broke its way":minus.length?jn(minus)+", offset by an otherwise smooth ride":"no big breaks either way"}.`}
+  else if(!pro.length&&con.length)sw=`gets there ${dir>0?"early":"late"} mostly on everyday luck, despite ${jn(con)}.`;
+  else sw=`gets there ${dir>0?"early":!isFinite(hitJ)?"never":"late"}${pro.length?(dir>0?" thanks to ":", held back by ")+jn(pro):""}${con.length?(pro.length?", despite ":" despite ")+jn(con):""}${!pro.length?" mostly on everyday luck":""}.`;
+  if(!isFinite(hitJ))sw=sw.replace("gets there never","never gets there");
+  const shortWhy=`<p class="story-why"><b>In short:</b> this future ${sw}</p>`;
+  const verdict=isFinite(hitJ)?`First $1,000,000 print: <b>${fmtMonth(t0,hitJ)}</b>, ${Math.abs(hitJ-medJ)<6?"about the same time as the middle future":Math.round(Math.abs(hitJ-medJ)/12*10)/10+" years "+(hitJ<medJ?"sooner":"later")+" than the middle future"}.`:`Bitcoin never reaches $1M before ${monthDate(t0,264).getUTCFullYear()} in this one.`;
+  $("story").innerHTML=`<div class="story-h"><span class="tag">${tag}</span><h3>${title}</h3><p class="story-v">${verdict}</p></div>${shortWhy}
+  <ol class="why">
+    <li><b>The trend it got:</b> ${vt[0]}: ${vt[1]}. Every future draws its own trend; this is the biggest reason dates differ.</li>
+    <li><b>Surprises:</b><br>${surprise}</li>
+    <li><b>Cycle tops along the way:</b> ${tops.length?tops.map(t=>`${fmt$(t.v)} in ${monthDate(t0,t.j).getUTCFullYear()}`).join(" → "):"none before it got there"}. The 4-year rhythm keeps going, each swing a little smaller.</li>
+    <li><b>Worst drop on the way:</b> −${Math.round(dd.dd*100)}% from ${fmtMonth(t0,dd.a+1)} to ${fmtMonth(t0,dd.b+1)}. Even good futures have brutal bear markets.</li>
+    <li><b>Luck:</b> ${luckTxt}</li>
+  </ol>`;
+  if(G){let d=`M ${G.X(0)} ${G.Y(G.price)}`;for(let j=0;j<G.Mshow;j++)d+=` L ${G.X(j+1).toFixed(1)} ${G.Y(p[j]).toFixed(1)}`;
+    let mk=tr.ev.filter(e=>e.j<=G.Mshow).map(e=>{const x=G.X(e.j),y=G.Y(p[e.j-1]);return e.up?`<path d="M ${x} ${y-14} l -7 11 h 14 z" fill="var(--good)"/>`:`<path d="M ${x} ${y+14} l -7 -11 h 14 z" fill="var(--bad)"/>`}).join("");
+    if(isFinite(hitJ)&&hitJ<=G.Mshow)mk+=`<circle cx="${G.X(hitJ)}" cy="${G.Y(1e6)}" r="8" fill="var(--teal)" stroke="var(--bg)" stroke-width="2"/>`;
+    $("spinG").innerHTML=`<path class="sample draw" d="${d}" fill="none" stroke="var(--teal)" stroke-width="2.8"/>${mk}`;
+    const pe=$("spinG").firstChild;pe.style.setProperty("--len",Math.ceil(pe.getTotalLength()))}
+  document.querySelectorAll(".spinrow button").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.k===kind)));
+  $("futures").scrollIntoView({behavior:reduce?"auto":"smooth",block:"start"});
+}
+
+
+
+/* ---------- what drives the date ---------- */
+let drvRun=0;
+function drawDrivers(){
+  const s0=base.s,key=JSON.stringify(Object.assign({},s0,{now:0}));if(key===drvKey)return;drvKey=key;const myRun=++drvRun;
+  const N=500,seed=777,med=s=>{const f=scores(s);return simulate(s,f,{N,seed,noBands:true}).fpQuant(5,.5)};
+  const defs=[
+    ["Trend: Full history only","Trusts the steeper 2013–2026 fit",{view:"full"}],
+    ["Trend: Slowing only","Assumes returns keep fading",{view:"slowing"}],
+    ["Trend: Recent cycles only","Slope of the last two cycles",{view:"recent"}],
+    ["Adoption trend at 75","Companies and ETFs accumulate hard",{forceA:75}],
+    ["Adoption trend at 25","Accumulation dries up",{forceA:25}],
+    ["No 4-year cycle","Boom and bust smoothed away",{cycle:0}],
+    ["Cycle 50% stronger","Bigger booms and busts",{cycle:150}],
+    ["No surprise shocks","Nothing big happens either way",{upOdds:0,dnOdds:0}],
+    ["Upside shocks 20% a year","Nations and giants keep arriving",{upOdds:20}],
+    ["Bull score at 75","A very strong day",{forceS:75}],
+    ["Bull score at 25","A very weak day",{forceS:25}]];
+  const b=med(s0),res=[];
+  const render=done=>{
+    const tests=res.slice().sort((x,y)=>Math.abs(y.delta)-Math.abs(x.delta)),max=Math.max(24,...tests.map(t=>Math.abs(t.delta)));
+    $("drv").innerHTML=`<div class="drow basehl"><div class="nm">Today's setup<small>all inputs as they are</small></div><div class="ctrack" style="height:14px"></div><div class="v">${fmtMonth(base.sim.t0,b)}</div></div>`+
+      tests.map(t=>{const w=Math.min(50,Math.abs(t.delta)/max*50),left=t.delta<=0?50-w:50,c=t.delta<0?"var(--good)":t.delta>0?"var(--bad)":"var(--muted)";
+        const lbl=t.delta===0?"same":(Math.abs(t.delta)>=12?(Math.abs(t.delta)/12).toFixed(1)+" yr":Math.abs(t.delta)+" mo")+(t.delta<0?" sooner":t.delta>0?" later":"");
+        return `<div class="drow"><div class="nm">${t.n}<small>${t.d}</small></div><div class="ctrack"><div class="cbar" style="left:${left}%;width:${Math.max(.6,w)}%;background:${c}"></div></div><div class="v" style="color:${c}">${lbl}</div></div>`}).join("")+
+      `<p style="color:var(--muted);font-size:12.5px;margin-top:6px">${done?"":"Running comparisons… "}Left of center is sooner, right is later. Each comparison uses 500 futures, so its baseline can differ from the headline date by a month or two.</p>`;
+  };
+  let i=0;const step=()=>{if(myRun!==drvRun)return;const [n,d,o]=defs[i];const m=med(Object.assign({},s0,o));res.push({n,d,delta:(isFinite(m)&&isFinite(b))?m-b:(isFinite(b)?120:-120)});i++;render(i===defs.length);if(i<defs.length)setTimeout(step,0);else fillDecide(res)};
+  setTimeout(step,0);
+}
+
+function fillDecide(res){
+  const g=n=>{const r=res.find(x=>x.n===n);return r?r.delta:0};
+  const yrs=m=>{const a=Math.abs(m);return a<12?a+" months":(a/12).toFixed(1)+" years"};
+  const items=[
+    ["How fast Bitcoin's growth keeps slowing","Every cycle has grown a bit slower than the last. If growth matches Bitcoin's whole history, $1M comes about "+yrs(g("Trend: Full history only"))+" sooner. If it keeps fading, about "+yrs(g("Trend: Slowing only"))+" later. This is the single biggest unknown."],
+    ["Whether big buyers keep stacking","ETFs, companies and miners buying year after year steepen the trend. Strong accumulation pulls the date about "+yrs(g("Adoption trend at 75"))+" sooner; if it dries up, it slips about "+yrs(g("Adoption trend at 25"))+"."],
+    ["Big surprises","A wave of countries or giant funds buying (20% odds a year) pulls it in about "+yrs(g("Upside shocks 20% a year"))+". Crackdowns and blow-ups push the other way."],
+    ["What doesn't matter much","A great or terrible day, week or month. Today's mood moves the next year's price, not the decade. That's why the date barely moves day to day."]];
+  $("decide").innerHTML=items.map((x,i)=>`<div class="dec"><span class="num">${i+1}</span><div><h3>${x[0]}</h3><p>${x[1]}</p></div></div>`).join("");
+}
+/* ---------- model check ---------- */
+function drawCheck(){
+  const W=1000,H=440,L=66,R=26,T=20,B=40,t0=Date.UTC(2011,0,1),t1=Date.UTC(2042,0,1),lo=Math.log(1),hi=Math.log(3e6);
+  const X=t=>L+(t-t0)/(t1-t0)*(W-L-R),Y=v=>T+(1-(Math.log(clamp(v,100,3e6))-lo)/(hi-lo))*(H-T-B);
+  let s="";
+  [1,10,100,1e3,1e4,1e5,1e6].forEach(v=>s+=`<line x1="${L}" x2="${W-R}" y1="${Y(v)}" y2="${Y(v)}" stroke="var(--line)" ${v===1e6?"":'stroke-dasharray="2 4"'}/><text x="${L-8}" y="${Y(v)+4}" text-anchor="end" font-family="${MONO}" font-size="11" fill="var(--muted)">${fmt$(v)}</text>`);
+  for(let y=2012;y<=2041;y+=3)s+=`<text x="${X(Date.UTC(y,0,1))}" y="${H-B+18}" text-anchor="middle" font-family="${MONO}" font-size="11" fill="var(--muted)">${y}</text>`;
+  {const pts=histSeries().filter(q=>q.t>=t0);let pl="";pts.forEach((q,i)=>pl+=(i?" L ":"M ")+X(q.t).toFixed(1)+" "+Y(q.p).toFixed(1));s+=`<path d="${pl}" fill="none" stroke="var(--fg)" stroke-width="1.3" opacity=".45"/>`}
+  const cols={slowing:"var(--muted)",recent:"var(--teal)",full:"var(--orange)"};
+  Object.keys(VIEWS).forEach(v=>{let p="";for(let i=0;i<=120;i++){const t=t0+(t1-t0)*i/120;p+=(i?" L ":"M ")+X(t).toFixed(1)+" "+Y(Math.exp(lnFair(v,t))).toFixed(1)}
+    s+=`<path d="${p}" fill="none" stroke="${cols[v]}" stroke-width="${v==="recent"?2.5:1.6}" ${v==="slowing"?'stroke-dasharray="5 4"':""}/>`;
+    const yE=Y(Math.exp(lnFair(v,t1)));s+=`<text x="${W-R-4}" y="${yE+(v==="full"?-6:v==="slowing"?14:-6)}" text-anchor="end" font-family="${MONO}" font-size="11" fill="${cols[v]}">${VIEWS[v].name} · slope ${VIEWS[v].k.toFixed(2)}</text>`});
+  s+=`<text x="${L+8}" y="${Y(1e6)-7}" font-family="${DISP}" font-weight="800" font-size="16" fill="var(--orange)">$1M</text>`;
+  MIDS.forEach(m=>{const x=X(m.t),y=Y(m.p);s+=`<line x1="${X(m.top.t)}" y1="${Y(m.top.p)}" x2="${X(m.bottom.t)}" y2="${Y(m.bottom.p)}" stroke="var(--fg)" opacity=".25"/><path d="M ${x} ${y-6} l 6 6 l -6 6 l -6 -6 z" fill="var(--fg)"/>`});
+  PIVOTS.forEach(p=>{const x=X(p.t),y=Y(p.p),top=p.type==="top";s+=`<circle cx="${x}" cy="${y}" r="5.5" fill="${top?"var(--orange)":"var(--teal)"}" ${p.prov?'stroke="var(--fg)" stroke-dasharray="2 2" stroke-width="1.5"':""}/><text x="${x}" y="${top?y-11:y+19}" text-anchor="middle" font-family="${MONO}" font-size="11" fill="${top?"var(--orange)":"var(--teal)"}">${fmt$(p.p)}${p.prov?"?":""}</text>`});
+  const now=Date.now();s+=`<line x1="${X(now)}" x2="${X(now)}" y1="${T}" y2="${H-B}" stroke="var(--fg)" opacity=".35" stroke-dasharray="3 3"/><text x="${X(now)+5}" y="${H-B-8}" font-family="${MONO}" font-size="11" fill="var(--fg)">today</text>`;
+  $("histchart").innerHTML=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Bitcoin cycle tops and bottoms since 2013 with three fitted trend lines">${s}</svg>`;
+  const bt=backtest();let tb=`<tr><th>Method</th><th>Slope</th><th>Predicted</th><th>Miss</th></tr>`;
+  bt.forEach(g=>{tb+=`<tr class="grp"><td colspan="4">Predicting the ${g.target} (actual ${fmt$(g.actual)})</td></tr>`;
+    g.rows.forEach(r=>{const e=(r.pred/g.actual-1)*100,c=Math.abs(e)<=10?"var(--good)":Math.abs(e)<=25?"var(--warn)":"var(--bad)";tb+=`<tr><td>${r.method}</td><td class="mono">${r.k.toFixed(2)}</td><td class="mono">${fmt$(r.pred)}</td><td class="err" style="color:${c}">${e>=0?"+":""}${e.toFixed(0)}%</td></tr>`})});
+  $("btTable").innerHTML=tb;
+  $("btNote").innerHTML=`Since 2011 the slope between cycle midpoints went ${SLOPES.map(x=>x.toFixed(2)).join(" → ")}: growth keeps slowing. No single method nails every cycle (the Recent slope was close in 2017 and 2025, the Slowing slope in 2021), which is why the meter blends them. The June 2026 low ($57,717) is provisional: a lower low would move every line.<br><br>Walk-forward test, mid-2015 to 2025: the 12-month range caught the real price <b>${BT.s12.pctIn}%</b> of the time and the 24-month range <b>${BT.s24.pctIn}%</b>. The 2015–2019 years were never used for tuning and scored ${BT.eras[0].s12.pctIn}% / ${BT.eras[0].s24.pctIn}%.`;
+}
+
+/* ---------- price history + track record ---------- */
+function histSeries(){const [y,m]=HIST.start.split("-").map(Number);const pts=HIST.closes.map((p,i)=>({t:Date.UTC(y,m-1+i,28),p}));HIST_EXTRA.forEach(([d,p])=>pts.push({t:Date.parse(d+"T00:00:00Z"),p,x:1}));return pts}
+const monthT=k=>{const [y,m]=k.split("-").map(Number);return Date.UTC(y,m-1,28)};
+function drawRecord(){
+  const W=1000,H=380,L=62,R=20,T=16,B=36,t0=Date.UTC(2016,3,1),t1=Date.UTC(2026,10,15),lo=Math.log(150),hi=Math.log(4e5);
+  const X=t=>L+(t-t0)/(t1-t0)*(W-L-R),Y=v=>T+(1-(Math.log(clamp(v,150,4e5))-lo)/(hi-lo))*(H-T-B);
+  let s="";[300,1e3,3e3,1e4,3e4,1e5,3e5].forEach(v=>s+=`<line x1="${L}" x2="${W-R}" y1="${Y(v)}" y2="${Y(v)}" stroke="var(--line)" stroke-dasharray="2 4"/><text x="${L-8}" y="${Y(v)+4}" text-anchor="end" font-family="${MONO}" font-size="11" fill="var(--muted)">${fmt$(v)}</text>`);
+  for(let y=2017;y<=2026;y++)s+=`<text x="${X(Date.UTC(y,0,1))}" y="${H-B+18}" text-anchor="middle" font-family="${MONO}" font-size="11" fill="var(--muted)">${y}</text>`;
+  const split=X(Date.UTC(2020,5,1));s+=`<rect x="${L}" y="${T}" width="${split-L}" height="${H-T-B}" fill="var(--teal)" opacity=".06"/><text x="${L+8}" y="${T+14}" font-family="${MONO}" font-size="11" fill="var(--teal)">OUT OF SAMPLE</text><text x="${split+8}" y="${T+14}" font-family="${MONO}" font-size="11" fill="var(--muted)">TUNING PERIOD</text>`;
+  BT.rows.forEach(r=>{if(r[3]==null)return;const d=new Date(monthT(r[0]));d.setUTCMonth(d.getUTCMonth()+12);const x=X(d.getTime()),q=r[2],inb=r[3]>=q[0]&&r[3]<=q[2];
+    s+=`<line x1="${x}" x2="${x}" y1="${Y(q[2])}" y2="${Y(q[0])}" stroke="var(--orange)" stroke-opacity=".28" stroke-width="6" stroke-linecap="round"/><line x1="${x-3}" x2="${x+3}" y1="${Y(q[1])}" y2="${Y(q[1])}" stroke="var(--orange)" stroke-width="1.5"/>`;
+    s+=`<circle cx="${x}" cy="${Y(r[3])}" r="3.3" fill="${inb?"var(--good)":"var(--bad)"}"/>`});
+  const pts=histSeries().filter(p=>p.t>=t0);let p="";pts.forEach((q,i)=>p+=(i?" L ":"M ")+X(q.t).toFixed(1)+" "+Y(q.p).toFixed(1));
+  s+=`<path d="${p}" fill="none" stroke="var(--fg)" stroke-width="1.6" opacity=".55"/>`;
+  $("recchart").innerHTML=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Each month's 12-month forecast range compared with the actual price a year later, 2016 to 2026">${s}</svg>`;
+  const A=BT.eras[2],O=BT.eras[0];
+  $("recTiles").innerHTML=`<div><b>${A.s12.pctIn}%</b><span>of ${A.s12.n} months tested, the real price a year later landed inside the meter's range</span></div>
+    <div><b>${A.s24.pctIn}%</b><span>hit rate two years out (${A.s24.inBand} of ${A.s24.n})</span></div>
+    <div><b>${A.s12.dirHit}%</b><span>called the direction right: higher or lower a year later</span></div>
+    <div><b>${O.s12.pctIn}%</b><span>hit rate in 2015–2019, years the model never saw while it was tuned. The real test.</span></div>`;
+  $("recEras").innerHTML=`<tr><th>Period</th><th>Months</th><th>Inside range, 1 yr</th><th>Inside range, 2 yr</th><th>Direction right</th><th>Real vs. middle guess</th></tr>`+
+    BT.eras.map(e=>`<tr><td>${e.label}<small>${e.note}</small></td><td class="mono">${e.s12.n}</td><td class="mono">${e.s12.pctIn}%</td><td class="mono">${e.s24.pctIn}%</td><td class="mono">${e.s12.dirHit}%</td><td class="mono">${e.s12.biasPct>0?"+":""}${e.s12.biasPct}%</td></tr>`).join("");
+}
+
+/* ---------- history ---------- */
+function renderHist(){
+  const box=$("hist");
+  const daily=shared.map(e=>{const s=Object.assign({},PREFS,e.inputs,{now:Date.parse(e.date+"T21:00:00Z"),newsSum:e.newsSum||0});const f=scores(s);return {d:e.date,s:f.S,a:f.A,p:s.price,m:e.med||"—"}});
+  const rows=(daily.length?daily:hist).slice(-90);
+  if(!rows.length){box.innerHTML=`<div class="histempty">No readings yet. Once the daily update runs, each day's scores and price collect here automatically. You can also press <b>Log today</b> to save your own.</div>`;return}
+  const W=420,H=90,xs=i=>10+i/Math.max(1,rows.length-1)*(W-20),ys=v=>H-10-(v/100)*(H-20);
+  const line=(k,c)=>`<path d="${rows.map((r,i)=>(i?"L":"M")+xs(i)+" "+ys(r[k]??50)).join(" ")}" fill="none" stroke="${c}" stroke-width="2.5"/>`;
+  box.innerHTML=`<p style="font-size:12.5px;color:var(--muted)">${daily.length?"Daily readings from the automatic update.":"Your saved readings on this device."}</p><div class="histsvg"><svg viewBox="0 0 ${W} ${H}" aria-label="Score history"><line x1="10" x2="${W-10}" y1="${ys(50)}" y2="${ys(50)}" stroke="var(--line)" stroke-dasharray="3 4"/>${line("s","var(--orange)")}${line("a","var(--teal)")}</svg></div>
+  <div class="legend"><span><i style="background:var(--orange)"></i>Bull score</span><span><i style="background:var(--teal)"></i>Adoption trend</span></div>
+  <table class="hist mono"><tr><th>Date</th><th>Bull</th><th>Adopt</th><th>BTC</th>${daily.length?"":"<th>$1M date</th>"}</tr>${rows.slice(-7).reverse().map(r=>`<tr><td>${r.d}</td><td>${r.s.toFixed(1)}</td><td>${(r.a??0).toFixed(1)}</td><td>${fmt$(r.p)}</td>${daily.length?"":`<td>${r.m}</td>`}</tr>`).join("")}</table>
+  ${daily.length?"":`<button class="btn ghost" type="button" id="clrHist" style="justify-self:start">Clear history</button>`}`;
+  const c=$("clrHist");if(c)c.onclick=()=>{hist=[];store.set("mm3.hist",hist);renderHist()};
+}
+$("logBtn").addEventListener("click",()=>{if(!base)return;const d=new Date(),iso=MON[d.getMonth()]+" "+d.getDate()+", "+d.getFullYear();
+  hist=hist.filter(h=>h.d!==iso);hist.push({d:iso,s:base.f.S,a:base.f.A,p:base.s.price,m:fmtMonth(base.sim.t0,base.sim.fpQuant(5,.5))});store.set("mm3.hist",hist);renderHist();
+  const b=$("logBtn");b.textContent="Saved ✓";setTimeout(()=>b.textContent="Log today",1600)});
+
+/* ---------- how it works ---------- */
+function drawSteps(c){
+  const {f,sim,s}=c,cyc=sim.cycleNow,ph=cyc<-0.8?"right at the cycle low":cyc<-0.3?"climbing out of the June 2026 low":cyc<0.6?"in the mid-cycle climb":"in the late-cycle run-up";
+  const st=[
+    ["Fit the trend to history","Lines are fitted to the midpoint of every cycle's top and bottom since 2013. Three views of how fast that line keeps rising are blended.",`Blended trend line today ${fmt$(sim.fairToday)}, rising about ${Math.round(sim.fairGrowth1y*100)}% over the next year`],
+    ["Grade the adoption trend","Year-over-year ETF demand, corporate buying and miner investment, graded 0–100. Above 50 steepens the line; below 50 flattens it.",`Adoption ${f.A.toFixed(1)} (${aBand(f.A).toLowerCase()}) → slope ${sim.kAdj>=0?"+":"−"}${Math.abs(sim.kAdj).toFixed(2)}`],
+    ["Add the 4-year cycle","Price swings around the trend: down for about 9 months after a top, then a fast recovery that flattens into the next top. Swings shrink each cycle.",`We are ${ph}. Cycle strength ${s.cycle}%.`],
+    ["Add today's bull score","Eight daily readings, graded and weighted. It nudges the next year up to ±25%, then fades out.",`Bull score ${f.S.toFixed(1)} → meter price ${fmt$(sim.meterToday)}`],
+    ["Run 2,000 futures","Each path follows its own trend slope, pulls toward the cycle, takes fat-tailed random moves (about 45% a year, fading to 25%) and the odd surprise shock. The first $1M month is recorded.",`Median ${fmtMonth(sim.t0,sim.fpQuant(5,.5))} · fastest 10% ${fmtMonth(sim.t0,sim.fpQuant(5,.1))} · slowest 10% ${fmtMonth(sim.t0,sim.fpQuant(5,.9))}`]
+  ];
+  $("steps").innerHTML=st.map((x,i)=>`<div class="step"><div class="num">${i+1}</div><h3>${x[0]}</h3><p>${x[1]}</p><div class="live">${x[2]}</div></div>`).join("");
+}
+
+/* ---------- X graphic ---------- */
+async function makeCard(){
+  if(!base)return;
+  try{await document.fonts.ready}catch(e){}
+  const c=document.createElement("canvas");c.width=1200;c.height=675;const x=c.getContext("2d");
+  const {f,sim,s}=base,med=sim.fpQuant(5,.5),[vName]=band(f.S);
+  const C={bg:"#0e1219",panel:"#151b24",line:"#2a3443",fg:"#e9edf2",mu:"#94a1b3",or:"#f7931a",te:"#3fb6a8",good:"#4cc38a",warn:"#e8b33d",bad:"#e5604f"};
+  const sc=v=>v>=60?C.good:v>=45?C.warn:C.bad;
+  x.fillStyle=C.bg;x.fillRect(0,0,1200,675);
+  const D=(w,sz)=>`${w} ${sz}px "Big Shoulders Display", Impact, sans-serif`, Mf=(w,sz)=>`${w} ${sz}px "IBM Plex Mono", monospace`;
+  x.fillStyle=C.mu;x.font=Mf(500,18);x.fillText("PLEB COMMAND CENTER · "+new Date().toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric"}).toUpperCase(),56,62);
+  x.font=D(900,74);{let cx=56;[["$1M",C.or],[" BTC",C.fg]].forEach(([w,c])=>{x.fillStyle=c;x.fillText(w,cx,136);cx+=x.measureText(w).width})}
+  // gauge
+  const gx=230,gy=420,gr=150;x.lineWidth=26;
+  [[0,30,C.bad],[30,45,C.bad],[45,60,C.warn],[60,75,C.good],[75,100,C.good]].forEach(([a,b,col],i)=>{x.strokeStyle=col;x.globalAlpha=[.9,.5,.7,.55,.9][i];x.beginPath();x.arc(gx,gy,gr,Math.PI+a/100*Math.PI+.01,Math.PI+b/100*Math.PI-.01);x.stroke()});
+  x.globalAlpha=1;const ang=Math.PI+f.S/100*Math.PI;x.strokeStyle=C.fg;x.lineWidth=6;x.beginPath();x.moveTo(gx,gy);x.lineTo(gx+(gr-30)*Math.cos(ang),gy+(gr-30)*Math.sin(ang));x.stroke();
+  x.fillStyle=C.fg;x.beginPath();x.arc(gx,gy,12,0,7);x.fill();
+  x.textAlign="center";x.font=D(900,64);x.fillStyle=C.fg;x.fillText(f.S.toFixed(1),gx,gy+72);x.font=D(800,30);x.fillStyle=sc(f.S);x.fillText(vName.toUpperCase(),gx,gy+108);
+  x.font=Mf(500,15);x.fillStyle=C.mu;x.fillText("BULL SCORE · 0–100",gx,gy-gr-20);
+  x.fillText("ADOPTION TREND "+f.A.toFixed(1)+" · "+aBand(f.A).toUpperCase(),gx,gy+142);
+  // right column
+  x.textAlign="left";const rx=470;
+  x.font=Mf(500,17);x.fillStyle=C.mu;x.fillText("MOST LIKELY MONTH BITCOIN FIRST HITS $1,000,000",rx,205);
+  x.font=D(900,138);x.fillStyle=C.or;x.fillText(fmtMonth(sim.t0,med).toUpperCase(),rx,330,670);
+  x.font=Mf(400,18);x.fillStyle=C.fg;x.fillText(`Range: ${fmtMonth(sim.t0,sim.fpQuant(5,.1))} (fast 10%) to ${fmtMonth(sim.t0,sim.fpQuant(5,.9))} (slow 10%)`,rx,368);
+  const stats=[["BTC NOW",fmt$(s.price)],["MODEL SAYS TODAY",fmt$(sim.meterToday)],["IN 12 MONTHS",fmt$(sim.bands[2][11])],["ODDS BY 2035",Math.round(sim.probBy(5,monthsTo(sim.t0,2035))*100)+"%"]];
+  stats.forEach(([k,v],i)=>{const sx=rx+i*172;x.fillStyle=C.panel;x.fillRect(sx,400,160,104);x.strokeStyle=C.line;x.lineWidth=1;x.strokeRect(sx+.5,400.5,159,103);x.fillStyle=C.mu;x.font=Mf(500,13);x.fillText(k,sx+14,428,134);x.fillStyle=C.fg;x.font=D(800,44);x.fillText(v,sx+14,484,134)});
+  // odds strip
+  x.font=Mf(500,13);x.fillStyle=C.mu;x.fillText("CHANCE OF $1M BY THE END OF…",rx,538);
+  const yrs=[2030,2032,2034,2036,2038,2040,2042,2044];yrs.forEach((y,i)=>{const p=sim.probBy(5,monthsTo(sim.t0,y)),bx=rx+i*86,h=Math.max(3,p*44);x.fillStyle="rgba(247,147,26,.25)";x.fillRect(bx,614-h,62,h);x.fillStyle=C.or;x.fillRect(bx,614-h,62,3);x.fillStyle=C.fg;x.font=Mf(600,14);x.textAlign="center";x.fillText((p<.005?"<1":Math.round(p*100))+"%",bx+31,608-h);x.fillStyle=C.mu;x.font=Mf(500,13);x.fillText(String(y),bx+31,634);x.textAlign="left"});
+  x.strokeStyle=C.line;x.lineWidth=1;x.beginPath();x.moveTo(56,651.5);x.lineTo(1144,651.5);x.stroke();
+  x.fillStyle=C.mu;x.font=Mf(400,13);x.fillText("2,000 simulated futures · trend fitted to every cycle since 2011 · backtested since 2015 · not financial advice",56,668);
+  x.textAlign="right";x.fillStyle=C.or;x.font=Mf(600,14);x.fillText("plebcc.com",1144,668);x.textAlign="left";
+  return c;
+}
+let cardBlob=null,postMode="long";
+const FED_TXT={cut:"cutting rates",hold:"on hold",holdhike:"on hold with hike risk",hike:"hiking"};
+function factorLine(k,s,f){
+  const n=v=>Math.round(v).toLocaleString("en-US"),pct=v=>(v>0?"+":"")+v+"%";
+  const below=Math.round((1-f.ratio)*100);
+  return ({
+    val:below>0?`Bitcoin sits ${below}% below the meter's long-run trend line`:`Bitcoin sits ${-below}% above the meter's long-run trend line`,
+    mom:`Price ${pct(s.chg30)} over the last 30 days`,
+    sent:s.fng<=45?`Fear & Greed at ${s.fng}: fear has marked good entries before`:s.fng>=60?`Fear & Greed at ${s.fng}: the crowd is getting greedy`:`Fear & Greed at a neutral ${s.fng}`,
+    etf:`Spot ETFs ${s.etf30>=0?"took in":"saw net outflows of"} $${n(Math.abs(s.etf30))}M over the last 30 days`,
+    corp:(()=>{const c=s.corp30>=1000?Math.round(s.corp30/100)*100:s.corp30;return s.corp30>=0.8*13700?`Companies bought ~${n(c)} BTC in 30 days, ${Math.round(s.corp30/137)}% of the ~13,700 mined`:`Companies bought ~${n(c)} BTC in 30 days vs ~13,700 mined`})(),
+    hash:`Mining power ${s.hash30>=0?"up":"down"} ${Math.abs(s.hash30)}% in 30 days`,
+    macro:`Fed ${FED_TXT[s.fed]||s.fed}, money supply ${pct(s.m2)} year over year`,
+    news:(()=>{const cut=Date.now()-7*864e5,rec=news.filter(n=>Date.parse(n.d+"T23:59:00Z")>=cut&&n.i!==0).sort((a,b)=>Math.abs(b.i)-Math.abs(a.i));const pick=rec.find(n=>Math.sign(n.i)===Math.sign(s.newsSum))||rec[0];return pick?`Headlines leaned ${s.newsSum>=0?"positive":"negative"} this week: ${pick.t}`:"A quiet week for headlines"})()
+  })[k];
+}
+function adoptLine(s,f){const ratio=s.corpYTD/Math.max(1,3.125*144*(Date.now()-Date.UTC(new Date().getUTCFullYear(),0,1))/864e5);
+  return `Companies have added ${Math.round(s.corpYTD).toLocaleString("en-US")} BTC this year, ${ratio.toFixed(1)}× what miners produced. ETFs are ${Math.abs(s.etfYTD)<1?(s.etfYTD>=0?"slightly positive (under $1B)":"slightly negative (under $1B)"):(s.etfYTD>=0?"+":"−")+"$"+Math.abs(s.etfYTD).toFixed(1)+"B"} year to date.`}
+function makePost(mode){
+  const {f,sim,s}=base,med=sim.fpQuant(5,.5),[vName]=band(f.S);
+  const rows=Object.keys(SHORT_W).map(k=>({k,pts:SHORT_W[k]*(f.sc[k]-50)})).sort((a,b)=>b.pts-a.pts);
+  const ups=rows.filter(r=>r.pts>0.4).slice(0,2),dns=rows.filter(r=>r.pts<-0.4).slice(-2).reverse();
+  const day=new Date().toLocaleDateString("en-US",{month:"short",day:"numeric"});
+  const p35=Math.round(sim.probBy(5,monthsTo(sim.t0,2035))*100);
+  const last=hist.length?hist[hist.length-1]:null;
+  if(mode==="short"){
+    const up=ups[0]?factorLine(ups[0].k,s,f):"steady conditions",dn=dns[0]?factorLine(dns[0].k,s,f):null;
+    return `$1M BTC, ${day}: ${f.S.toFixed(0)}/100, ${vName.toLowerCase()}.\n\nUp: ${up}.${dn?"\nDown: "+dn+".":""}\n\nMeter's estimate for the first $1M day: ${fmtMonth(sim.t0,med)}.\n\nplebcc.com`;
+  }
+  let t=`$1M BTC · ${day}\n\nBull score: ${f.S.toFixed(0)}/100 (${vName.toLowerCase()})\nMeter's estimate for the first $1M day: ${fmtMonth(sim.t0,med)}\nModeled odds of $1M by 2035: ${p35}%\n`;
+  if(ups.length)t+=`\nPushing it up:\n${ups.map(r=>"• "+factorLine(r.k,s,f)).join("\n")}\n`;
+  if(dns.length)t+=`\nHolding it back:\n${dns.map(r=>"• "+factorLine(r.k,s,f)).join("\n")}\n`;
+  t+=`\nThe long game: ${adoptLine(s,f)} That adoption trend (${f.A.toFixed(0)}/100, ${aBand(f.A).toLowerCase()}) is what moves the $1M date. Daily news moves next year's price, not the decade.\n\nTrack it free: plebcc.com`;
+  return t;
+}
+function postChecks(){
+  const {f,s}=base;const rows=Object.keys(SHORT_W).map(k=>({k,pts:SHORT_W[k]*(f.sc[k]-50)})).sort((a,b)=>b.pts-a.pts);
+  const used=[...rows.filter(r=>r.pts>0.4).slice(0,2),...rows.filter(r=>r.pts<-0.4).slice(-2)].map(r=>r.k);
+  const keys=postMode==="short"?used.slice(0,1).concat(used.slice(-1)):used.concat(["corpY","etfY"]);
+  const NM={val:"Trend-line gap",mom:"30-day price change",sent:"Fear & Greed",etf:"ETF flows",corp:"Company buying",hash:"Mining power",macro:"Fed & M2",news:"Headline",corpY:"Company buying this year",etfY:"ETFs this year"};
+  const srcOf=k=>(notes[k]||(CARDS.S.concat(CARDS.A).find(c=>c.key===k)||{}).src||"No source recorded");
+  const ageH=(Date.now()-Date.parse(dataAsOf))/36e5;
+  const warn=k=>/not verified|estimate|est\.|unverified/i.test(srcOf(k))||k==="val";
+  return `<div class="label">Check before posting · data from ${new Date(dataAsOf).toLocaleString("en-US",{month:"short",day:"numeric",hour:"numeric",minute:"2-digit",timeZone:"America/New_York"})} ET${ageH>30?' <b style="color:var(--bad)">· over a day old, press Update now first</b>':""}</div>
+  <ul class="checks">${[...new Set(keys)].map(k=>`<li class="${warn(k)?"warn":""}"><b>${NM[k]||k}</b>${warn(k)?(k==="val"?" · model estimate, not a market number":" · double-check"):""}<span>${srcOf(k).replace(/</g,"&lt;")}</span></li>`).join("")}
+  <li><b>$1M date and odds</b> · model output, label it as the meter's estimate<span>From 2,000 simulated futures; backtested since 2015.</span></li></ul>`;
+}
+function showPost(){$("postCheck").innerHTML=postChecks();const t=makePost(postMode);$("postText").value=t;const n=[...t].length;$("postCount").textContent=n+" characters"+(n>280?" · needs X Premium for one post":" · fits in one post");
+  document.querySelectorAll("#postSeg button").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.v===postMode)))}
+$("shareBtn").addEventListener("click",async()=>{if(!base)return;const c=await makeCard();if(!c)return;$("shareImg").src=c.toDataURL("image/png");c.toBlob(b=>cardBlob=b,"image/png");showPost();$("shareOv").hidden=false;$("postText").focus()});
+$("postSeg").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;postMode=b.dataset.v;showPost()});
+$("postCopy").addEventListener("click",async()=>{const ta=$("postText");try{await navigator.clipboard.writeText(ta.value);$("postCopy").textContent="Copied ✓"}catch(e){ta.select();$("postCopy").textContent="Selected: press Ctrl/Cmd+C"}setTimeout(()=>$("postCopy").textContent="Copy post",2200)});
+$("shareClose").addEventListener("click",()=>{$("shareOv").hidden=true});
+$("shareOv").addEventListener("click",e=>{if(e.target===$("shareOv"))$("shareOv").hidden=true});
+document.addEventListener("keydown",e=>{if(e.key==="Escape")$("shareOv").hidden=true});
+$("shareSave").addEventListener("click",async()=>{
+  if(!cardBlob)return;const name="1m-btc-"+new Date().toISOString().slice(0,10)+".png";
+  let dl=null;try{dl=window.claude&&window.claude.use?await window.claude.use("downloads"):null}catch(e){dl=null}
+  if(dl){try{await dl.save({filename:name,data:cardBlob});$("shareNote").textContent="Saved."}catch(e){$("shareNote").textContent=e&&e.code==="declined"?"Save cancelled.":"Saving isn't available here. Right-click or long-press the image to save it."}return}
+  const a=document.createElement("a");a.href=URL.createObjectURL(cardBlob);a.download=name;document.body.appendChild(a);a.click();a.remove();
+  $("shareNote").textContent="Downloading. If nothing happens, right-click or long-press the image to save it.";
+});
+
+/* ---------- run ---------- */
+let timer=null;
+function schedule(){clearTimeout(timer);timer=setTimeout(run,120)}
+function compute(s){const f=scores(s);return {s,f,sim:simulate(s,f,{keep:8})}}
+function run(animate){
+  saveState();
+  const s0=Object.assign({},S0,{now:Date.now(),newsSum:newsSum()});
+  base=compute(s0);
+  if(active.size){const s1=Object.assign({},s0);SCEN.filter(x=>active.has(x.id)).forEach(x=>x.ap(s1));cur=compute(s1)}else cur=base;
+  const {f,sim,s}=cur,med=sim.fpQuant(5,.5),[vName,vB]=band(f.S);
+  $("whatbar").hidden=!active.size;
+  if(active.size){
+    const bm=base.sim.fpQuant(5,.5),dm=(isFinite(med)&&isFinite(bm))?med-bm:null;
+    $("whattext").textContent=`What-if mode: ${plural(active.size,"scenario")} on. Numbers on the page are hypothetical.`;
+    $("labDelta").textContent=dm==null?"—":dm===0?"No change":(Math.abs(dm)>=12?(Math.abs(dm)/12).toFixed(1)+" years":plural(Math.abs(dm),"month"))+(dm<0?" sooner":dm>0?" later":"");
+    $("labDelta").style.color=dm==null||dm===0?"var(--fg)":dm<0?"var(--good)":"var(--bad)";
+    $("labText").textContent=`Bull score ${base.f.S.toFixed(1)} → ${f.S.toFixed(1)}. Adoption trend ${base.f.A.toFixed(1)} → ${f.A.toFixed(1)}. Next 12 months (median): ${fmt$(base.sim.bands[2][11])} → ${fmt$(sim.bands[2][11])}. Odds of $1M by end of 2035: ${Math.round(base.sim.probBy(5,monthsTo(sim.t0,2035))*100)}% → ${Math.round(sim.probBy(5,monthsTo(sim.t0,2035))*100)}%.${dm===0?" Short-term news moves the next year, not the long-run date.":""}`;
+    $("labBase").textContent=fmtMonth(sim.t0,bm);$("labNew").textContent=fmtMonth(sim.t0,med);
+  }else{$("labDelta").textContent="Pick one";$("labDelta").style.color="var(--fg)";$("labText").textContent="Tip: everyday news mostly moves the next year. Big lasting stuff, like a country buying, moves the $1M date by years.";$("labBase").textContent=fmtMonth(sim.t0,med);$("labNew").textContent="—"}
+  setNeedle(f.S);$("verdict").textContent=vName;$("verdict").style.color=sev(f.S);
+  document.querySelectorAll("#scale div").forEach(d=>{const on=+d.dataset.b===vB;d.classList.toggle("on",on);d.style.color=on?sev(f.S):""});
+  $("adoptV").textContent=f.A.toFixed(1)+" · "+aBand(f.A);$("adoptV").style.color="var(--teal)";$("adoptBar").style.width=f.A+"%";
+  $("adoptTxt").textContent=`Steepens the long-run trend by ${sim.kAdj>=0?"+":"−"}${Math.abs(sim.kAdj).toFixed(2)} slope points. This is the score that moves the $1M date most.`;
+  for(const k in f.sc){const el=document.querySelector(`[data-pill="${k}"]`);if(el){el.textContent=f.sc[k].toFixed(0);el.closest(".f").style.setProperty("--sev",sev(f.sc[k]))}}
+  for(const k in f.lc){const el=document.querySelector(`[data-pill="${k}"]`);if(el){el.textContent=f.lc[k].toFixed(0);el.closest(".f").style.setProperty("--sev",sev(f.lc[k]))}}
+  const vs=$("valSrc");if(vs)vs.innerHTML=`Long-run trend line today ${fmtFull(f.fair)}; price is ${Math.round(f.ratio*100)}% of it. ${(notes.val||CARDS.S[0].src).replace(/</g,"&lt;")}${live.val?` <b style="color:var(--good)">Live: ${live.val}</b>`:""}`;
+  $("newsSumV").textContent=`Last 7 days add up to ${s.newsSum>0?"+":""}${s.newsSum} → score ${f.sc.news.toFixed(0)}`;
+  const gap=(sim.meterToday/s.price-1)*100,p35=Math.round(sim.probBy(5,monthsTo(sim.t0,2035))*100);
+  const fairTxt=Math.abs(gap)<5?"priced about right":gap>0?"on sale, "+Math.round(gap)+"% under fair price":"running hot, "+Math.round(-gap)+"% over fair price";
+  $("plain").innerHTML=`Today's vibe is <b>${vName.toLowerCase()}</b>. Bitcoin is ${fairTxt}, and ${f.A>=58?"big buyers keep stacking":f.A>=42?"big buyers are holding steady":"big buyers are pulling back"}. The meter's best guess for the first $1M day: <b>${fmtMonth(sim.t0,med)}</b>.`;
+  const pc=y=>{const p=sim.probBy(5,monthsTo(sim.t0,y));return p<.005?"<1%":Math.round(p*100)+"%"};$("e30").textContent=pc(2030);$("e35").textContent=pc(2035);$("e40").textContent=pc(2040);
+  rollDate(sim.t0,prevMed,med);prevMed=med;
+  const yE=j=>isFinite(j)?monthDate(sim.t0,j).getUTCFullYear():"2048+";
+  const dleft=isFinite(med)?Math.max(0,Math.round((monthDate(sim.t0,med)-Date.now())/864e5)):null;
+  $("medSub").textContent=`${dleft!=null?"About "+dleft.toLocaleString("en-US")+" days ("+(dleft/365.25).toFixed(1)+" years) away.":"More than 20 years away."} Lucky futures get there by ${yE(sim.fpQuant(5,.1))}; slow ones by ${yE(sim.fpQuant(5,.9))}.`;
+  $("kPrice").textContent=fmt$(s.price);$("kPriceD").textContent=`${Math.round((1-s.price/126200)*100)}% below the all-time high`;
+  $("kMeter").textContent=fmt$(sim.meterToday);$("kMeterD").textContent="where the meter says BTC should be today";
+  $("k12").textContent=fmt$(sim.bands[2][11]);$("k12D").textContent=`most likely; anywhere from ${fmt$(sim.bands[0][11])} to ${fmt$(sim.bands[4][11])}`;
+  const yy=j=>isFinite(j)?"'"+String(monthDate(sim.t0,j).getUTCFullYear()).slice(2):"'49+";$("kRange").textContent=`${yy(sim.fpQuant(5,.1))}–${yy(sim.fpQuant(5,.9))}`;
+  const y0=new Date(sim.t0).getUTCFullYear(),medY=isFinite(med)?monthDate(sim.t0,med).getUTCFullYear():0;let oh="";
+  for(let y=y0+3;y<=y0+20;y++){const p=sim.probBy(5,monthsTo(sim.t0,y));oh+=`<div class="bar${y===medY?" hl":""}" title="${Math.round(p*100)}% by the end of ${y}"><span class="pct">${p<.005?"<1":Math.round(p*100)}</span><span class="fill" style="height:${Math.max(2,p*78)}%"></span><span class="yr">'${String(y).slice(2)}</span></div>`}
+  $("odds").innerHTML=oh;
+  drawContrib(f);drawRoad(sim,s.price);drawSteps(cur);
+  const days=Math.round((halvingT()-Date.now())/DAYMS),hd=new Date(halvingT());
+  $("halvingLine").innerHTML=`<span><i style="background:var(--teal)"></i>Next halving ≈ ${MON[hd.getUTCMonth()]} ${hd.getUTCFullYear()}, about ${days.toLocaleString("en-US")} days away (block 1,050,000; ${(1050000-blockHeight).toLocaleString("en-US")} blocks to go${blockLive?"":", estimated"})</span>`;
+  if(firstRun&&!active.size){firstRun=false;const ls=store.get("mm4.lastSeen",null),medNow=sim.fpQuant(5,.5);
+    if(ls&&Date.now()-ls.at>6*36e5){const dp=(s.price/ls.price-1)*100,dm=isFinite(medNow)&&isFinite(ls.med)?medNow-(ls.med-Math.round((Date.now()-ls.at)/(30.4375*864e5))):0;
+      const when=new Date(ls.at).toLocaleDateString("en-US",{month:"short",day:"numeric"});
+      $("since").innerHTML=`Since your last visit (${when}): BTC <b style="color:${dp>=0?"var(--good)":"var(--bad)"}">${dp>=0?"+":""}${dp.toFixed(1)}%</b> · vibe ${ls.S.toFixed(0)} → ${f.S.toFixed(0)} · $1M date <b>${dm===0?"unchanged":Math.abs(dm)+" mo "+(dm<0?"sooner":"later")}</b>`;$("since").hidden=false}
+    store.set("mm4.lastSeen",{at:Date.now(),price:s.price,S:f.S,med:medNow})}
+  setTimeout(drawDrivers,60);
+}
+
+/* ---------- update: daily data store + live feeds ---------- */
+async function getJSON(u,ms){const c=new AbortController(),to=setTimeout(()=>c.abort(),ms||7000);try{const r=await fetch(u,{signal:c.signal,cache:"no-store"});if(!r.ok)throw 0;return await r.json()}finally{clearTimeout(to)}}
+let dbRef=null,dbTried=false;
+async function getDb(){if(dbTried)return dbRef;dbTried=true;try{dbRef=window.claude&&window.claude.use?await window.claude.use("db"):null}catch(e){dbRef=null}return dbRef}
+async function fromStore(){
+  const out={daily:"same",hist:shared.length>0};
+  const db=await getDb();
+  if(db){try{const snap=await db.doc("meter/latest").get();if(snap.exists&&applyData(snap.data()))out.daily=true;else if(snap.exists)out.daily="same"}catch(e){}
+    try{const q=await db.collection("meter_history").orderBy("date","desc").limit(180).get();shared=q.docs.map(d=>d.data()).filter(x=>x&&x.date&&x.inputs).reverse();out.hist=shared.length>0}catch(e){}}
+  try{let j=null;try{j=await getJSON("/data.json",5000)}catch(e){j=await getJSON("data.json",5000)}if(j&&j.latest){if(applyData(j.latest))out.daily=true;else out.daily=out.daily||"same";if(Array.isArray(j.history)){shared=j.history.slice(-180);out.hist=true}}}catch(e){}
+  return out;
+}
+async function fromLive(){
+  const got=[];const t=new Date().toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit"});
+  const jobs=[
+    getJSON("https://api.coingecko.com/api/v3/coins/bitcoin/market_chart?vs_currency=usd&days=30&interval=daily").then(j=>{const p=j.prices,now=p[p.length-1][1],then=p[0][1];S0.price=Math.round(now);S0.chg30=+((now/then-1)*100).toFixed(1);live.val="$"+S0.price.toLocaleString("en-US")+" at "+t;live.mom=S0.chg30+"% at "+t;got.push("price")}),
+    getJSON("https://api.alternative.me/fng/?limit=1").then(j=>{S0.fng=+j.data[0].value;live.sent=S0.fng+" at "+t;got.push("mood")}),
+    getJSON("https://mempool.space/api/v1/mining/hashrate/1y").then(j=>{const h=j.hashrates;if(h&&h.length>40){const avg=a=>a.reduce((x,y)=>x+y.avgHashrate,0)/a.length,n=h.length;S0.hash30=+((avg(h.slice(n-7))/avg(h.slice(n-37,n-30))-1)*100).toFixed(1);S0.hashYoY=+((avg(h.slice(n-7))/avg(h.slice(0,7))-1)*100).toFixed(1);live.hash=S0.hash30+"% at "+t;live.hashY=S0.hashYoY+"% at "+t;got.push("hashrate")}}),
+    fetch("https://mempool.space/api/blocks/tip/height",{cache:"no-store"}).then(r=>r.ok?r.text():Promise.reject()).then(x=>{blockHeight=+x;blockLive=true;got.push("blocks")})
+  ];
+  await Promise.allSettled(jobs);return got;
+}
+let updating=false;
+async function updateData(manual){
+  if(updating)return;updating=true;const btn=$("updBtn");btn.classList.add("busy");$("updTxt").textContent="Updating…";
+  const before=base?{price:base.s.price,S:base.f.S,med:base.sim.fpQuant(5,.5),asOf:dataAsOf}:null;
+  const [st,lv]=await Promise.all([fromStore(),fromLive()]);
+  saveState();buildBoards();run();renderHist();
+  const when=new Date(dataAsOf);
+  $("updWhen").textContent=when.toLocaleString("en-US",{month:"short",day:"numeric",year:"numeric",hour:"numeric",minute:"2-digit",timeZone:"America/New_York"})+" ET";
+  const chips=[];chips.push(`<span class="chip ${st.daily?"live":"snap"}">${st.daily?"Daily data ✓":"Daily data: snapshot"}</span>`);
+  chips.push(lv.length?`<span class="chip live">Live: ${lv.join(", ")}</span>`:`<span class="chip">Live feeds unavailable right now</span>`);
+  $("updChips").innerHTML=chips.join("");$("updDot").className="dot "+(lv.length||st.daily===true?"on":"");
+  btn.classList.remove("busy");$("updTxt").textContent="Update now";updating=false;
+  if(manual&&before&&base){const a=base,dp=(a.s.price/before.price-1)*100,dm=a.sim.fpQuant(5,.5)-before.med;
+    const parts=[];parts.push(st.daily===true?"New daily data loaded":st.daily==="same"?"Daily data already current":"No newer daily data yet");if(lv.length)parts.push("live "+lv.join(", ")+" refreshed");
+    toast(`${parts.join(" · ")}. BTC ${fmt$(a.s.price)} (${dp>=0?"+":""}${dp.toFixed(1)}%). $1M date ${!isFinite(dm)||dm===0?"unchanged":Math.abs(dm)+" mo "+(dm<0?"sooner":"later")}.`)}
+}
+let toastT=null;function toast(m){const t=$("toast");t.textContent=m;t.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>t.hidden=true,6500)}
+$("updBtn").addEventListener("click",()=>updateData(true));
+
+const links=[...document.querySelectorAll("nav.tabs a")];
+if("IntersectionObserver" in window){const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)links.forEach(a=>a.classList.toggle("on",a.getAttribute("href")==="#"+e.target.id))}),{rootMargin:"-40% 0px -55% 0px"});links.forEach(a=>{const t=document.querySelector(a.getAttribute("href"));if(t)io.observe(t)})}
+
+let nerd=store.get("mm3.nerd",false);
+function setMode(n){nerd=n;store.set("mm3.nerd",n);document.body.classList.toggle("simple",!n);const b=$("modeBtn");b.textContent="Nerd mode: "+(n?"on":"off");b.setAttribute("aria-pressed",String(n))}
+$("modeBtn").addEventListener("click",()=>setMode(!nerd));
+$("modeBtn2").addEventListener("click",()=>{setMode(true);$("needle").scrollIntoView({behavior:reduce?"auto":"smooth"})});
+setMode(nerd);
+buildBoards();buildScen();renderNews();renderHist();drawGauge();drawCheck();drawRecord();run(true);updateData(false);
+})();
+
+</script>
+
+</body></html>
